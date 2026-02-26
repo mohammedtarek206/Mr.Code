@@ -33,7 +33,6 @@ export async function POST(request: NextRequest) {
     }
 }
 
-
 export async function DELETE(request: NextRequest) {
     try {
         const user = await authenticateRequest(request);
