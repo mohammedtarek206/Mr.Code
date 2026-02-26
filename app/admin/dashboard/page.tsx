@@ -7,8 +7,16 @@ import { FiBook, FiKey, FiUsers, FiTrendingUp } from 'react-icons/fi';
 export default function AdminDashboard() {
     const [counts, setCounts] = useState({ tracks: 0, students: 0, codes: 0 });
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (loading) {
+                setLoading(false);
+                setError('تعذر الاتصال بقاعدة البيانات. تأكد من صحة MONGODB_URI في إعدادات Vercel.');
+            }
+        }, 8000);
+
         const fetchStats = async () => {
             try {
                 const token = localStorage.getItem('token');
@@ -46,6 +54,7 @@ export default function AdminDashboard() {
             }
         };
         fetchStats();
+        return () => clearTimeout(timeout);
     }, []);
 
     const stats = [
@@ -57,14 +66,20 @@ export default function AdminDashboard() {
 
     if (loading) {
         return (
-            <div className="min-h-[400px] flex items-center justify-center">
+            <div className="min-h-[400px] flex flex-col items-center justify-center space-y-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary"></div>
+                <p className="text-gray-400 animate-pulse">جاري تحميل الإحصائيات...</p>
             </div>
         );
     }
 
     return (
         <div className="space-y-8">
+            {error && (
+                <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-center font-bold">
+                    {error}
+                </div>
+            )}
             <div>
                 <h1 className="text-3xl font-bold text-white mb-2">Dashboard Overview</h1>
                 <p className="text-gray-400">Welcome back, Admin. Here's what's happening today.</p>

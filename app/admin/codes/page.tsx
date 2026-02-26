@@ -19,9 +19,17 @@ export default function AdminCodes() {
     const [count, setCount] = useState(1);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (loading) {
+                setLoading(false);
+                setError('استغرق جلب البيانات وقتاً طويلاً. يرجى التأكد من اتصال قاعدة البيانات.');
+            }
+        }, 8000);
         fetchCodes();
+        return () => clearTimeout(timeout);
     }, []);
 
     const fetchCodes = async () => {
@@ -134,14 +142,20 @@ export default function AdminCodes() {
 
     if (loading) {
         return (
-            <div className="min-h-[400px] flex items-center justify-center">
+            <div className="min-h-[400px] flex flex-col items-center justify-center space-y-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary"></div>
+                <p className="text-gray-400 animate-pulse">جاري جلب البيانات...</p>
             </div>
         );
     }
 
     return (
         <div className="space-y-8 relative">
+            {error && (
+                <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-center font-bold">
+                    {error}
+                </div>
+            )}
             <div className="flex justify-between items-center no-print">
                 <div className="text-right">
                     <h1 className="text-3xl font-bold text-white mb-2">أكواد الدخول</h1>
