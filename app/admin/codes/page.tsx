@@ -31,7 +31,11 @@ export default function AdminCodes() {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
-            setCodes(data);
+            if (Array.isArray(data)) {
+                setCodes(data);
+            } else {
+                setCodes([]);
+            }
         } catch (err) {
             console.error(err);
         }
@@ -124,7 +128,7 @@ export default function AdminCodes() {
         setTimeout(() => setCopiedId(null), 2000);
     };
 
-    const selectedCodes = codes.filter(c => selectedIds.includes(c._id));
+    const selectedCodes = Array.isArray(codes) ? codes.filter(c => selectedIds.includes(c._id)) : [];
 
     return (
         <div className="space-y-8 relative">
@@ -191,7 +195,7 @@ export default function AdminCodes() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {codes.map((code) => (
+                            {Array.isArray(codes) && codes.map((code) => (
                                 <tr key={code._id} className={`hover:bg-white/5 transition-colors ${selectedIds.includes(code._id) ? 'bg-primary/5' : ''}`}>
                                     <td className="px-6 py-4">
                                         <button onClick={() => toggleSelect(code._id)} className={`p-2 rounded-lg transition-all ${selectedIds.includes(code._id) ? 'text-accent' : 'text-gray-600'}`}>
@@ -220,7 +224,7 @@ export default function AdminCodes() {
                                         ) : '-'}
                                     </td>
                                     <td className="px-6 py-4 text-gray-400 text-sm">
-                                        {new Date(code.createdAt).toLocaleDateString('ar-EG')}
+                                        {code.createdAt ? new Date(code.createdAt).toLocaleDateString('ar-EG') : '-'}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
