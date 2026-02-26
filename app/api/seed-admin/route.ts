@@ -1,28 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
 import connectDB from '@/lib/mongodb';
 import User from '@/models/User';
+import bcrypt from 'bcryptjs';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
         await connectDB();
 
-        const adminEmail = 'admin@switchcode.tech';
-        const existingAdmin = await User.findOne({ email: adminEmail });
-
+        const existingAdmin = await User.findOne({ role: 'admin' });
         if (existingAdmin) {
             return NextResponse.json({ message: 'Admin already exists' });
         }
 
         const hashedPassword = await bcrypt.hash('admin123', 10);
         await User.create({
-            name: 'Platform Admin',
-            email: adminEmail,
+            name: 'Main Admin',
+            email: 'admin@mrcode.com',
             password: hashedPassword,
             role: 'admin',
+            isActive: true
         });
 
-        return NextResponse.json({ message: 'Admin created successfully' });
+        return NextResponse.json({
+            message: 'Admin account created successfully',
+            credentials: {
+                email: 'admin@mrcode.com',
+                password: 'admin123'
+            }
+        });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }

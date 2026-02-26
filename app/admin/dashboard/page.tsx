@@ -6,6 +6,7 @@ import { FiBook, FiKey, FiUsers, FiTrendingUp } from 'react-icons/fi';
 
 export default function AdminDashboard() {
     const [counts, setCounts] = useState({ tracks: 0, students: 0, codes: 0 });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -40,6 +41,8 @@ export default function AdminDashboard() {
                 });
             } catch (err) {
                 console.error('Failed to fetch stats:', err);
+            } finally {
+                setLoading(false);
             }
         };
         fetchStats();
@@ -51,6 +54,14 @@ export default function AdminDashboard() {
         { title: 'Codes Generated', value: counts.codes.toString(), icon: FiKey, color: 'text-purple-500', bg: 'bg-purple-500/10' },
         { title: 'Active Students', value: (counts.students - 1 > 0 ? counts.students - 1 : 0).toString(), icon: FiTrendingUp, color: 'text-orange-500', bg: 'bg-orange-500/10' },
     ];
+
+    if (loading) {
+        return (
+            <div className="min-h-[400px] flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8">
