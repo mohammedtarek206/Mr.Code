@@ -11,22 +11,32 @@ export default function AdminDashboard() {
         const fetchStats = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const [tracksRes, studentsRes, codesRes] = await Promise.all([
-                    fetch('/api/tracks'),
-                    fetch('/api/admin/students', { headers: { 'Authorization': `Bearer ${token}` } }),
-                    fetch('/api/admin/codes', { headers: { 'Authorization': `Bearer ${token}` } })
-                ]);
+
+                // Helper to fetch and return array or empty
+                const safeFetch = async (url: string, useAuth = false) => {
+                    try {
+                        const headers: any = {};
+                        if (useAuth && token) headers['Authorization'] = `Bearer ${token}`;
+                        const res = await fetch(url, { headers });
+                        if (!res.ok) return [];
+                        const data = await res.json();
+                        return Array.isArray(data) ? data : [];
+                    } catch (e) {
+                        console.error(`Error fetching ${url}:`, e);
+                        return [];
+                    }
+                };
 
                 const [tracks, students, codes] = await Promise.all([
-                    tracksRes.json(),
-                    studentsRes.json(),
-                    codesRes.json()
+                    safeFetch('/api/tracks'),
+                    safeFetch('/api/admin/students', true),
+                    safeFetch('/api/admin/codes', true)
                 ]);
 
                 setCounts({
-                    tracks: Array.isArray(tracks) ? tracks.length : 0,
-                    students: Array.isArray(students) ? students.length : 0,
-                    codes: Array.isArray(codes) ? codes.length : 0
+                    tracks: tracks.length,
+                    students: students.length,
+                    codes: codes.length
                 });
             } catch (err) {
                 console.error('Failed to fetch stats:', err);

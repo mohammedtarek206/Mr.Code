@@ -15,7 +15,7 @@ interface AccessCode {
 
 export default function AdminCodes() {
     const [codes, setCodes] = useState<AccessCode[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [count, setCount] = useState(1);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -129,6 +129,14 @@ export default function AdminCodes() {
     };
 
     const selectedCodes = Array.isArray(codes) ? codes.filter(c => selectedIds.includes(c._id)) : [];
+
+    if (loading) {
+        return (
+            <div className="min-h-[400px] flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8 relative">
