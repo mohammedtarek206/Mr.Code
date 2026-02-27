@@ -176,29 +176,29 @@ html[dir="rtl"] body {
   }
 
   .print-card {
-    border: 1.5mm solid #1e293b !important;
+    border: 1px solid #1e293b !important;
     border-radius: 10mm !important;
     padding: 8mm !important;
-    background: #0f172a !important;
-    position: relative !important;
-    width: 95mm !important;
-    height: 80mm !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    flex-direction: column !important;
-    page-break-inside: avoid !important;
-  }
-
-
-
-  .print-card-content {
     text-align: center !important;
+    background: #0A0E27 !important;
+    /* Mr Code Navy Background */
+    color: white !important;
+    page-break-inside: avoid !important;
+    height: 80mm !important;
+    /* Fixed height for consistency */
+    width: 95mm !important;
+    /* Fixed width for consistency */
     display: flex !important;
     flex-direction: column !important;
-    height: 100% !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+    margin-bottom: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    overflow: hidden !important;
   }
-}
 
-.no-print {
-  display: none !important;
+  .no-print {
+    display: none !important;
+  }
 }

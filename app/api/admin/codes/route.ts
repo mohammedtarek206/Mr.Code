@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 import AccessCode from '@/models/AccessCode';
-import User from '@/models/User'; // Required for populate
-import Track from '@/models/Track'; // Required for populate
 import { authenticateRequest } from '@/lib/auth';
 
 // Helper to generate a random code
@@ -24,26 +21,13 @@ export async function GET(request: NextRequest) {
         }
 
         await connectDB();
-
-        // Final Fix: Force registration of schemas to avoid "Schema hasn't been registered" error
-        // This is necessary because Next.js sometimes loses model registration between requests
-        try {
-            if (!mongoose.models.User) mongoose.model('User', User.schema);
-            if (!mongoose.models.Track) mongoose.model('Track', Track.schema);
-        } catch (e) {
-            // Models might already be registered, which is fine
-        }
-
         const codes = await AccessCode.find()
             .populate('studentId', 'name')
             .populate('trackId', 'title')
             .sort({ createdAt: -1 });
-
-        console.log(`Fetched ${codes.length} codes`);
         return NextResponse.json(codes, { status: 200 });
     } catch (error: any) {
-        console.error('Fetch codes error:', error);
-        return NextResponse.json({ error: 'Failed to fetch codes: ' + error.message }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to fetch codes' }, { status: 500 });
     }
 }
 

@@ -6,55 +6,33 @@ import { FiBook, FiKey, FiUsers, FiTrendingUp } from 'react-icons/fi';
 
 export default function AdminDashboard() {
     const [counts, setCounts] = useState({ tracks: 0, students: 0, codes: 0 });
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            if (loading) {
-                setLoading(false);
-                setError('تعذر الاتصال بقاعدة البيانات. تأكد من صحة MONGODB_URI في إعدادات Vercel.');
-            }
-        }, 8000);
-
         const fetchStats = async () => {
             try {
                 const token = localStorage.getItem('token');
-
-                // Helper to fetch and return array or empty
-                const safeFetch = async (url: string, useAuth = false) => {
-                    try {
-                        const headers: any = {};
-                        if (useAuth && token) headers['Authorization'] = `Bearer ${token}`;
-                        const res = await fetch(url, { headers });
-                        if (!res.ok) return [];
-                        const data = await res.json();
-                        return Array.isArray(data) ? data : [];
-                    } catch (e) {
-                        console.error(`Error fetching ${url}:`, e);
-                        return [];
-                    }
-                };
+                const [tracksRes, studentsRes, codesRes] = await Promise.all([
+                    fetch('/api/tracks'),
+                    fetch('/api/admin/students', { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch('/api/admin/codes', { headers: { 'Authorization': `Bearer ${token}` } })
+                ]);
 
                 const [tracks, students, codes] = await Promise.all([
-                    safeFetch('/api/tracks'),
-                    safeFetch('/api/admin/students', true),
-                    safeFetch('/api/admin/codes', true)
+                    tracksRes.json(),
+                    studentsRes.json(),
+                    codesRes.json()
                 ]);
 
                 setCounts({
-                    tracks: tracks.length,
-                    students: students.length,
-                    codes: codes.length
+                    tracks: Array.isArray(tracks) ? tracks.length : 0,
+                    students: Array.isArray(students) ? students.length : 0,
+                    codes: Array.isArray(codes) ? codes.length : 0
                 });
             } catch (err) {
                 console.error('Failed to fetch stats:', err);
-            } finally {
-                setLoading(false);
             }
         };
         fetchStats();
-        return () => clearTimeout(timeout);
     }, []);
 
     const stats = [
@@ -64,22 +42,8 @@ export default function AdminDashboard() {
         { title: 'Active Students', value: (counts.students - 1 > 0 ? counts.students - 1 : 0).toString(), icon: FiTrendingUp, color: 'text-orange-500', bg: 'bg-orange-500/10' },
     ];
 
-    if (loading) {
-        return (
-            <div className="min-h-[400px] flex flex-col items-center justify-center space-y-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary"></div>
-                <p className="text-gray-400 animate-pulse">جاري تحميل الإحصائيات...</p>
-            </div>
-        );
-    }
-
     return (
         <div className="space-y-8">
-            {error && (
-                <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-center font-bold">
-                    {error}
-                </div>
-            )}
             <div>
                 <h1 className="text-3xl font-bold text-white mb-2">Dashboard Overview</h1>
                 <p className="text-gray-400">Welcome back, Admin. Here's what's happening today.</p>

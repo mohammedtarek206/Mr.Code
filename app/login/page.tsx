@@ -144,7 +144,7 @@ export default function StudentLoginPage() {
                         disabled={loading}
                         className="w-full bg-accent py-4 rounded-xl text-dark font-black text-lg hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 shadow-[0_0_20px_rgba(235,53,101,0.3)]"
                     >
-                        {loading ? 'جاري التحقق من الكود...' : 'دخول المنصة'}
+                        {loading ? 'Validating...' : 'ACCESS PLATFORM'}
                     </button>
                 </form>
 

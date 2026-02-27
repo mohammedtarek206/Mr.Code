@@ -15,21 +15,13 @@ interface AccessCode {
 
 export default function AdminCodes() {
     const [codes, setCodes] = useState<AccessCode[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [count, setCount] = useState(1);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            if (loading) {
-                setLoading(false);
-                setError('استغرق جلب البيانات وقتاً طويلاً. يرجى التأكد من اتصال قاعدة البيانات.');
-            }
-        }, 8000);
         fetchCodes();
-        return () => clearTimeout(timeout);
     }, []);
 
     const fetchCodes = async () => {
@@ -39,21 +31,9 @@ export default function AdminCodes() {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
-
-            if (res.ok) {
-                if (Array.isArray(data)) {
-                    setCodes(data);
-                    setError(null);
-                }
-            } else {
-                setError(data.error || 'فشل تحميل الأكواد من السيرفر');
-                setCodes([]);
-            }
-        } catch (err: any) {
+            setCodes(data);
+        } catch (err) {
             console.error(err);
-            setError('حدث خطأ في الاتصال: ' + err.message);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -144,24 +124,10 @@ export default function AdminCodes() {
         setTimeout(() => setCopiedId(null), 2000);
     };
 
-    const selectedCodes = Array.isArray(codes) ? codes.filter(c => selectedIds.includes(c._id)) : [];
-
-    if (loading) {
-        return (
-            <div className="min-h-[400px] flex flex-col items-center justify-center space-y-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary"></div>
-                <p className="text-gray-400 animate-pulse">جاري جلب البيانات...</p>
-            </div>
-        );
-    }
+    const selectedCodes = codes.filter(c => selectedIds.includes(c._id));
 
     return (
         <div className="space-y-8 relative">
-            {error && (
-                <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-center font-bold">
-                    {error}
-                </div>
-            )}
             <div className="flex justify-between items-center no-print">
                 <div className="text-right">
                     <h1 className="text-3xl font-bold text-white mb-2">أكواد الدخول</h1>
@@ -225,7 +191,7 @@ export default function AdminCodes() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {Array.isArray(codes) && codes.map((code) => (
+                            {codes.map((code) => (
                                 <tr key={code._id} className={`hover:bg-white/5 transition-colors ${selectedIds.includes(code._id) ? 'bg-primary/5' : ''}`}>
                                     <td className="px-6 py-4">
                                         <button onClick={() => toggleSelect(code._id)} className={`p-2 rounded-lg transition-all ${selectedIds.includes(code._id) ? 'text-accent' : 'text-gray-600'}`}>
@@ -254,7 +220,7 @@ export default function AdminCodes() {
                                         ) : '-'}
                                     </td>
                                     <td className="px-6 py-4 text-gray-400 text-sm">
-                                        {code.createdAt ? new Date(code.createdAt).toLocaleDateString('ar-EG') : '-'}
+                                        {new Date(code.createdAt).toLocaleDateString('ar-EG')}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
@@ -286,15 +252,13 @@ export default function AdminCodes() {
                 {selectedCodes.map((code) => (
                     <div key={code._id} className="print-card" style={{ direction: 'ltr' }}>
                         {/* Header Section */}
-                        <div className="flex justify-center items-center mb-4 text-center">
-                            <div>
-                                <h2 className="text-[18pt] font-black text-white leading-tight mb-2 uppercase">
-                                    Eng. Mohamed Tarek
-                                </h2>
-                                <span className="bg-accent text-dark px-6 py-1.5 rounded-full text-[13pt] font-black shadow-md inline-block">
-                                    01284621015
-                                </span>
-                            </div>
+                        <div className="mb-4">
+                            <h2 className="text-[18pt] font-black text-white leading-tight mb-2 uppercase">
+                                Eng. Mohamed Tarek
+                            </h2>
+                            <span className="bg-accent text-dark px-6 py-1.5 rounded-full text-[13pt] font-black shadow-md inline-block">
+                                01284621015
+                            </span>
                         </div>
 
                         {/* Middle Section (Access Code) */}
