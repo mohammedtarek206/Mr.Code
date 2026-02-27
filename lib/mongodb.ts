@@ -12,13 +12,13 @@ interface MongooseCache {
 }
 
 declare global {
-  var mongoose: MongooseCache | undefined;
+  var __mongoose_cache: MongooseCache | undefined;
 }
 
-let cached: MongooseCache = global.mongoose || { conn: null, promise: null };
+let cached: MongooseCache = global.__mongoose_cache || { conn: null, promise: null };
 
-if (!global.mongoose) {
-  global.mongoose = cached;
+if (!global.__mongoose_cache) {
+  global.__mongoose_cache = cached;
 }
 
 async function connectDB() {
@@ -52,6 +52,13 @@ async function connectDB() {
     cached.promise = null;
     throw e;
   }
+
+  // Force register all known models to prevent "Schema not registered" errors
+  const User = require('../models/User').default;
+  const AccessCode = require('../models/AccessCode').default;
+  const Track = require('../models/Track').default;
+  const Book = require('../models/Book').default;
+  const FreeVideo = require('../models/FreeVideo').default;
 
   return cached.conn;
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import connectDB from '@/lib/mongodb';
 import AccessCode from '@/models/AccessCode';
 import User from '@/models/User'; // Required for populate
@@ -24,8 +25,14 @@ export async function GET(request: NextRequest) {
 
         await connectDB();
 
-        // Ensure models are registered before population
-        if (!User.modelName || !Track.modelName) { /* touch models */ }
+        // Final Fix: Force registration of schemas to avoid "Schema hasn't been registered" error
+        // This is necessary because Next.js sometimes loses model registration between requests
+        try {
+            if (!mongoose.models.User) mongoose.model('User', User.schema);
+            if (!mongoose.models.Track) mongoose.model('Track', Track.schema);
+        } catch (e) {
+            // Models might already be registered, which is fine
+        }
 
         const codes = await AccessCode.find()
             .populate('studentId', 'name')
