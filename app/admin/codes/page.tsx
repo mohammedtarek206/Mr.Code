@@ -208,57 +208,65 @@ export default function AdminCodes() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {codes.map((code) => (
-                                <tr key={code._id} className={`hover:bg-white/5 transition-colors ${selectedIds.includes(code._id) ? 'bg-primary/5' : ''}`}>
-                                    <td className="px-6 py-4">
-                                        <button onClick={() => toggleSelect(code._id)} className={`p-2 rounded-lg transition-all ${selectedIds.includes(code._id) ? 'text-accent' : 'text-gray-600'}`}>
-                                            {selectedIds.includes(code._id) ? <FiCheckSquare size={20} /> : <FiSquare size={20} />}
-                                        </button>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className="font-mono text-white text-lg font-bold">{code.code}</span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {code.isUsed ? (
-                                            <span className="px-3 py-1 bg-red-500/10 text-red-500 rounded-full text-xs border border-red-500/20">
-                                                مستخدم
-                                            </span>
-                                        ) : (
-                                            <span className="px-3 py-1 bg-green-500/10 text-green-500 rounded-full text-xs border border-green-500/20">
-                                                متاح
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {code.studentId ? (
-                                            <div className="flex items-center text-gray-300">
-                                                <FiUser className="ml-2 text-accent" /> {code.studentId.name}
-                                            </div>
-                                        ) : '-'}
-                                    </td>
-                                    <td className="px-6 py-4 text-gray-400 text-sm">
-                                        {new Date(code.createdAt).toLocaleDateString('ar-EG')}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2">
-                                            <button
-                                                onClick={() => copyToClipboard(code.code, code._id)}
-                                                className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-all hover:text-white"
-                                                title="نسخ الكود"
-                                            >
-                                                {copiedId === code._id ? <FiCheck className="text-green-500" /> : <FiCopy />}
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(code._id)}
-                                                className="p-2 hover:bg-red-500/10 rounded-lg text-gray-600 hover:text-red-500 transition-all"
-                                                title="حذف الكود"
-                                            >
-                                                <FiTrash2 />
-                                            </button>
-                                        </div>
+                            {codes.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500 font-cairo">
+                                        لا توجد أكواد حالياً. قم بتوليد أكواد جديدة لتظهر هنا.
                                     </td>
                                 </tr>
-                            ))}
+                            ) : (
+                                codes.map((code) => (
+                                    <tr key={code._id} className={`hover:bg-white/5 transition-colors ${selectedIds.includes(code._id) ? 'bg-primary/5' : ''}`}>
+                                        <td className="px-6 py-4">
+                                            <button onClick={() => toggleSelect(code._id)} className={`p-2 rounded-lg transition-all ${selectedIds.includes(code._id) ? 'text-accent' : 'text-gray-600'}`}>
+                                                {selectedIds.includes(code._id) ? <FiCheckSquare size={20} /> : <FiSquare size={20} />}
+                                            </button>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="font-mono text-white text-lg font-bold">{code.code}</span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {code.isUsed ? (
+                                                <span className="px-3 py-1 bg-red-500/10 text-red-500 rounded-full text-xs border border-red-500/20">
+                                                    مستخدم
+                                                </span>
+                                            ) : (
+                                                <span className="px-3 py-1 bg-green-500/10 text-green-500 rounded-full text-xs border border-green-500/20">
+                                                    متاح
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {code.studentId ? (
+                                                <div className="flex items-center text-gray-300">
+                                                    <FiUser className="ml-2 text-accent" /> {code.studentId.name}
+                                                </div>
+                                            ) : '-'}
+                                        </td>
+                                        <td className="px-6 py-4 text-gray-400 text-sm">
+                                            {new Date(code.createdAt).toLocaleDateString('ar-EG')}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() => copyToClipboard(code.code, code._id)}
+                                                    className="p-2 hover:bg-white/10 rounded-lg text-gray-400 transition-all hover:text-white"
+                                                    title="نسخ الكود"
+                                                >
+                                                    {copiedId === code._id ? <FiCheck className="text-green-500" /> : <FiCopy />}
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(code._id)}
+                                                    className="p-2 hover:bg-red-500/10 rounded-lg text-gray-600 hover:text-red-500 transition-all"
+                                                    title="حذف الكود"
+                                                >
+                                                    <FiTrash2 />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>

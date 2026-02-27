@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import AccessCode from '@/models/AccessCode';
+import User from '@/models/User'; // Ensure User model is registered
+import Track from '@/models/Track'; // Ensure Track model is registered
 import { authenticateRequest } from '@/lib/auth';
 
 // Helper to generate a random code
@@ -22,12 +24,14 @@ export async function GET(request: NextRequest) {
 
         await connectDB();
         const codes = await AccessCode.find()
-            .populate('studentId', 'name')
-            .populate('trackId', 'title')
+            .populate({ path: 'studentId', select: 'name', model: User })
+            .populate({ path: 'trackId', select: 'title', model: Track })
             .sort({ createdAt: -1 });
+
         return NextResponse.json(codes, { status: 200 });
     } catch (error: any) {
-        return NextResponse.json({ error: 'Failed to fetch codes' }, { status: 500 });
+        console.error('Fetch codes error:', error);
+        return NextResponse.json({ error: 'Failed to fetch codes', details: error.message }, { status: 500 });
     }
 }
 
