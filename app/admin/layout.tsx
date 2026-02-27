@@ -22,6 +22,7 @@ import {
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const [authorized, setAuthorized] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [checkingAuth, setCheckingAuth] = useState(true);
     const router = useRouter();
     const pathname = usePathname();
 
@@ -39,6 +40,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         } catch (error) {
             console.error('Auth check error:', error);
             router.push('/admin/login');
+        } finally {
+            setCheckingAuth(false);
         }
     }, [router]);
 
@@ -50,9 +53,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     const isLoginPage = pathname === '/admin/login';
 
-    if (!authorized && !isLoginPage) return null;
-
     if (isLoginPage) return <>{children}</>;
+
+    if (checkingAuth) {
+        return (
+            <div className="min-h-screen bg-dark flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary"></div>
+            </div>
+        );
+    }
+
+    if (!authorized) return null;
 
     const menuItems = [
         { title: 'Overview', icon: FiLayout, href: '/admin/dashboard' },

@@ -189,13 +189,7 @@ html[dir="rtl"] body {
     page-break-inside: avoid !important;
   }
 
-  .qr-code-wrapper {
-    background: white !important;
-    padding: 1mm !important;
-    border-radius: 2mm !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
+
 
   .print-card-content {
     text-align: center !important;

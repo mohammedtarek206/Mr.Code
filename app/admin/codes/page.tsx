@@ -280,7 +280,7 @@ export default function AdminCodes() {
                 {selectedCodes.map((code) => (
                     <div key={code._id} className="print-card" style={{ direction: 'ltr' }}>
                         {/* Header Section */}
-                        <div className="flex justify-between items-start mb-4">
+                        <div className="flex justify-center items-center mb-4 text-center">
                             <div>
                                 <h2 className="text-[18pt] font-black text-white leading-tight mb-2 uppercase">
                                     Eng. Mohamed Tarek
@@ -288,13 +288,6 @@ export default function AdminCodes() {
                                 <span className="bg-accent text-dark px-6 py-1.5 rounded-full text-[13pt] font-black shadow-md inline-block">
                                     01284621015
                                 </span>
-                            </div>
-                            <div className="qr-code-wrapper bg-white p-1 rounded-lg">
-                                <img
-                                    src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://mr-code-rho.vercel.app/"
-                                    alt="Platform QR"
-                                    className="w-[18mm] h-[18mm]"
-                                />
                             </div>
                         </div>
 
