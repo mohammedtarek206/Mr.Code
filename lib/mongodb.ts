@@ -32,6 +32,7 @@ async function connectDB() {
     }
     const opts = {
       bufferCommands: false,
+      serverSelectionTimeoutMS: 5000, // Fail after 5 seconds instead of hanging
     };
 
     console.log('Connecting to MongoDB...');

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import AccessCode from '@/models/AccessCode';
+import User from '@/models/User'; // Required for populate
+import Track from '@/models/Track'; // Required for populate
 import { authenticateRequest } from '@/lib/auth';
 
 // Helper to generate a random code
@@ -25,9 +27,12 @@ export async function GET(request: NextRequest) {
             .populate('studentId', 'name')
             .populate('trackId', 'title')
             .sort({ createdAt: -1 });
+
+        console.log(`Fetched ${codes.length} codes`);
         return NextResponse.json(codes, { status: 200 });
     } catch (error: any) {
-        return NextResponse.json({ error: 'Failed to fetch codes' }, { status: 500 });
+        console.error('Fetch codes error:', error);
+        return NextResponse.json({ error: 'Failed to fetch codes: ' + error.message }, { status: 500 });
     }
 }
 

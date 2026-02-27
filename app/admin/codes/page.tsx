@@ -39,13 +39,19 @@ export default function AdminCodes() {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
-            if (Array.isArray(data)) {
-                setCodes(data);
+
+            if (res.ok) {
+                if (Array.isArray(data)) {
+                    setCodes(data);
+                    setError(null);
+                }
             } else {
+                setError(data.error || 'فشل تحميل الأكواد من السيرفر');
                 setCodes([]);
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
+            setError('حدث خطأ في الاتصال: ' + err.message);
         } finally {
             setLoading(false);
         }
