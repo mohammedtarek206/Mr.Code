@@ -35,10 +35,13 @@ async function connectDB() {
       serverSelectionTimeoutMS: 5000, // Fail after 5 seconds instead of hanging
     };
 
-    console.log('Connecting to MongoDB...');
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      console.log('MongoDB connected successfully');
-      return mongoose;
+    console.log('Initiating MongoDB connection...');
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
+      console.log('MongoDB connection established.');
+      return mongooseInstance;
+    }).catch(err => {
+      console.error('Initial MongoDB connection error:', err);
+      throw err;
     });
   }
 
