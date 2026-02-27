@@ -268,20 +268,29 @@ export default function AdminCodes() {
             <div className="hidden print-container">
                 {selectedCodes.map((code) => (
                     <div key={code._id} className="print-card" style={{ direction: 'ltr' }}>
-                        {/* Header Section */}
-                        <div className="mb-4">
-                            <h2 className="text-[18pt] font-black text-white leading-tight mb-2 uppercase">
-                                Eng. Mohamed Tarek
-                            </h2>
-                            <span className="bg-accent text-dark px-6 py-1.5 rounded-full text-[13pt] font-black shadow-md inline-block">
-                                01284621015
-                            </span>
+                        {/* Header Section with Flex layout for QR */}
+                        <div className="flex justify-between items-start mb-4 text-left">
+                            <div className="flex-1">
+                                <h2 className="text-[16pt] font-black text-white leading-tight mb-2 uppercase">
+                                    Eng. Mohamed Tarek
+                                </h2>
+                                <span className="bg-accent text-dark px-4 py-1 rounded-full text-[11pt] font-black shadow-md inline-block">
+                                    01284621015
+                                </span>
+                            </div>
+                            <div className="w-[18mm] h-[18mm] bg-white p-1 rounded-lg">
+                                <img
+                                    src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://mr-code-rho.vercel.app/"
+                                    alt="Platform QR"
+                                    className="w-full h-full"
+                                />
+                            </div>
                         </div>
 
                         {/* Middle Section (Access Code) */}
-                        <div className="flex-1 flex flex-col items-center justify-center bg-white/5 rounded-[8mm] border border-white/10 shadow-inner px-4 my-2">
-                            <span className="text-[9pt] uppercase tracking-[0.5em] font-black text-white opacity-40 mb-2">Unique Code</span>
-                            <h1 className="text-[34pt] font-black font-mono tracking-[0.1em] text-white leading-none">
+                        <div className="flex-1 flex flex-col items-center justify-center bg-white/5 rounded-[6mm] border border-white/10 shadow-inner px-4 my-2">
+                            <span className="text-[8pt] uppercase tracking-[0.4em] font-black text-white opacity-40 mb-1">Unique Code</span>
+                            <h1 className="text-[32pt] font-black font-mono tracking-[0.1em] text-white leading-none">
                                 {code.code}
                             </h1>
                         </div>

@@ -177,25 +177,26 @@ html[dir="rtl"] body {
 
   .print-card {
     border: 1px solid #1e293b !important;
-    border-radius: 10mm !important;
-    padding: 8mm !important;
-    text-align: center !important;
+    border-radius: 8mm !important;
+    padding: 6mm !important;
     background: #0A0E27 !important;
-    /* Mr Code Navy Background */
     color: white !important;
     page-break-inside: avoid !important;
     height: 80mm !important;
-    /* Fixed height for consistency */
     width: 95mm !important;
-    /* Fixed width for consistency */
     display: flex !important;
     flex-direction: column !important;
-    justify-content: center !important;
     box-shadow: none !important;
     margin-bottom: 0 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     overflow: hidden !important;
+  }
+
+  /* Force background colors on all browsers */
+  .print-card * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .no-print {
