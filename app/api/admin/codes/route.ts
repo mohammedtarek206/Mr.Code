@@ -23,6 +23,10 @@ export async function GET(request: NextRequest) {
         }
 
         await connectDB();
+
+        // Ensure models are registered before population
+        if (!User.modelName || !Track.modelName) { /* touch models */ }
+
         const codes = await AccessCode.find()
             .populate('studentId', 'name')
             .populate('trackId', 'title')
