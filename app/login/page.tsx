@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { FiKey, FiUser, FiAlertCircle, FiPhone } from 'react-icons/fi';
+import { FaWhatsapp } from 'react-icons/fa';
 
 export default function StudentLoginPage() {
     const [mode, setMode] = useState<'login' | 'register'>('login');
