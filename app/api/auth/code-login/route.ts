@@ -62,6 +62,16 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        if (!user) {
+            // New fix: If we only got the code and no name/phone, it's a first-time user trying to "Quick Login"
+            if (!name || !phone) {
+                return NextResponse.json({
+                    error: 'هذا الكود مستخدم لأول مرة. يرجى اختيار "إنشاء حساب جديد" وإدخال بياناتك.',
+                    isNewUser: true
+                }, { status: 404 });
+            }
+        }
+
         // 2. If no user, check if the code is valid and unused
         const accessCode = await AccessCode.findOne({ code, isUsed: false });
 
