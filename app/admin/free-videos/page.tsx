@@ -29,9 +29,15 @@ export default function AdminFreeVideos() {
         try {
             const res = await fetch('/api/free-videos');
             const data = await res.json();
-            setVideos(data);
+            if (res.ok && Array.isArray(data)) {
+                setVideos(data);
+            } else {
+                console.error('Failed to fetch videos:', data.error);
+                setVideos([]);
+            }
         } catch (err) {
             console.error(err);
+            setVideos([]);
         }
     };
 
@@ -43,6 +49,11 @@ export default function AdminFreeVideos() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!formData.title || !formData.youtubeId) {
+            alert('يرجى ملء جميع الحقول');
+            return;
+        }
+
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
@@ -59,12 +70,18 @@ export default function AdminFreeVideos() {
                     youtubeId: videoId
                 }),
             });
+
             if (res.ok) {
                 setFormData({ title: '', description: '', youtubeId: '' });
                 fetchVideos();
+                alert('تمت إضافة الفيديو بنجاح');
+            } else {
+                const data = await res.json();
+                alert(data.error || 'فشل في إضافة الفيديو');
             }
         } catch (err) {
             console.error(err);
+            alert('حدث خطأ أثناء الاتصال بالسيرفر');
         } finally {
             setLoading(false);
         }
