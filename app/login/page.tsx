@@ -173,13 +173,15 @@ export default function StudentLoginPage() {
 
                 <div className="mt-10 pt-8 border-t border-white/5 text-center">
                     <p className="text-gray-500 text-sm font-cairo mb-4">
-                        ليست لديك كود؟ تواصل مع المهندس محمد طارق
+                        ليست لديك كود؟ تواصل مع المهندس محمد طارق عبر الواتساب
                     </p>
                     <a
-                        href="tel:01284621015"
-                        className="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white px-6 py-3 rounded-full transition-all font-bold border border-white/10"
+                        href="https://wa.me/201284621015"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-green-500/10 hover:bg-green-500/20 text-green-500 px-6 py-3 rounded-full transition-all font-bold border border-green-500/20"
                     >
-                        <FiPhone className="text-accent" /> 01284621015
+                        <FaWhatsapp className="text-xl" /> 01284621015
                     </a>
                 </div>
             </motion.div>

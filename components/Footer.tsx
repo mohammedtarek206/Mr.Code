@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { FiMail, FiPhone, FiMapPin, FiGithub, FiTwitter, FiLinkedin } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin, FiFacebook, FiYoutube } from 'react-icons/fi';
+import { FaWhatsapp } from 'react-icons/fa';
 
 export default function Footer() {
   return (
@@ -49,8 +50,10 @@ export default function Footer() {
                 info@mrcode.tech
               </li>
               <li className="flex items-center">
-                <FiPhone className="mr-2 text-accent" />
-                01284621015
+                <FaWhatsapp className="mr-2 text-accent" />
+                <a href="https://wa.me/201284621015" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">
+                  01284621015
+                </a>
               </li>
               <li className="flex items-center">
                 <FiMapPin className="mr-2 text-accent" />
@@ -58,14 +61,14 @@ export default function Footer() {
               </li>
             </ul>
             <div className="flex space-x-4 mt-6">
-              <a href="#" className="text-gray-400 hover:text-accent transition-colors">
-                <FiGithub className="w-5 h-5" />
+              <a href="https://www.facebook.com/share/18DTAYfaAK/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-accent transition-colors">
+                <FiFacebook className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-accent transition-colors">
-                <FiTwitter className="w-5 h-5" />
+              <a href="https://youtube.com/@mohamedabotarek4634?si=95Y0-r-NQpD97LVn" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-accent transition-colors">
+                <FiYoutube className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-accent transition-colors">
-                <FiLinkedin className="w-5 h-5" />
+              <a href="https://wa.me/201284621015" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-accent transition-colors">
+                <FaWhatsapp className="w-5 h-5" />
               </a>
             </div>
           </div>
@@ -74,6 +77,17 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-primary/20 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
           <p>© {new Date().getFullYear()} Mr.Code. All rights reserved.</p>
+          <div className="flex items-center space-x-2 mt-4 md:mt-0 font-cairo">
+            <span>تم التصميم بواسطة</span>
+            <a
+              href="https://wa.me/201284621015"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white font-bold hover:text-accent transition-all"
+            >
+              Mohammed Tarek
+            </a>
+          </div>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link href="/privacy" className="hover:text-accent transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-accent transition-colors">Terms of Service</Link>
