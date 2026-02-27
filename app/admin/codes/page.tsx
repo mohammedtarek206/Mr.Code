@@ -31,14 +31,26 @@ export default function AdminCodes() {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
-            setCodes(data);
+            if (res.ok && Array.isArray(data)) {
+                setCodes(data);
+            } else {
+                console.error('Failed to fetch codes:', data.error);
+                setCodes([]); // Fallback to empty array to prevent crash
+            }
         } catch (err) {
             console.error(err);
+            setCodes([]);
         }
     };
 
     const handleGenerate = async (e: React.FormEvent) => {
         e.preventDefault();
+        const generateCount = parseInt(count.toString());
+        if (isNaN(generateCount) || generateCount < 1) {
+            alert('يرجى إدخال عدد صحيح');
+            return;
+        }
+
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
@@ -48,13 +60,18 @@ export default function AdminCodes() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ count }),
+                body: JSON.stringify({ count: generateCount }),
             });
             if (res.ok) {
                 fetchCodes();
+                setCount(1);
+            } else {
+                const data = await res.json();
+                alert(data.error || 'فشل في توليد الأكواد');
             }
         } catch (err) {
             console.error(err);
+            alert('حدث خطأ أثناء الاتصال بالسيرفر');
         } finally {
             setLoading(false);
         }
