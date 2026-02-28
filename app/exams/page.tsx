@@ -18,6 +18,7 @@ export default function ExamsPage() {
                     // Filter by schedule
                     const now = new Date();
                     const filtered = data.filter(exam => {
+                        if (exam.isActive === false) return false;
                         const start = exam.startDate ? new Date(exam.startDate) : null;
                         const end = exam.endDate ? new Date(exam.endDate) : null;
                         if (start && now < start) return false;

@@ -21,6 +21,10 @@ export async function GET(
             return NextResponse.json({ error: 'Exam not found' }, { status: 404 });
         }
 
+        if (exam.isActive === false) {
+            return NextResponse.json({ error: 'This exam is currently deactivated.' }, { status: 403 });
+        }
+
         // Check scheduling
         const now = new Date();
         if (exam.startDate && now < new Date(exam.startDate)) {

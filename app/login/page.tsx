@@ -47,7 +47,10 @@ export default function StudentLoginPage() {
             if (res.ok) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
-                localStorage.setItem('studentCode', code); // For persistence
+                localStorage.setItem('userName', data.user.name);
+                localStorage.setItem('userRole', data.user.role);
+                localStorage.setItem('userGrade', data.user.grade || '');
+                localStorage.setItem('studentCode', code);
                 router.push('/dashboard'); // Direct to dashboard instead of tracks for better experience
             } else {
                 setError(data.error || 'Login failed');

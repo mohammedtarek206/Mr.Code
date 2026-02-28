@@ -17,6 +17,7 @@ export interface IExam extends Document {
     startDate?: Date;
     endDate?: Date;
     oneTimeAttempt: boolean;
+    isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -39,6 +40,7 @@ const ExamSchema: Schema = new Schema(
         startDate: { type: Date },
         endDate: { type: Date },
         oneTimeAttempt: { type: Boolean, default: true },
+        isActive: { type: Boolean, default: true },
     },
     {
         timestamps: true,

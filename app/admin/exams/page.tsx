@@ -16,6 +16,7 @@ interface Exam {
     startDate?: string;
     endDate?: string;
     oneTimeAttempt: boolean;
+    isActive: boolean;
 }
 
 export default function AdminExams() {
@@ -33,7 +34,8 @@ export default function AdminExams() {
         questions: [] as any[],
         startDate: '',
         endDate: '',
-        oneTimeAttempt: true
+        oneTimeAttempt: true,
+        isActive: true
     });
     const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -129,7 +131,8 @@ export default function AdminExams() {
             questions: [],
             startDate: '',
             endDate: '',
-            oneTimeAttempt: true
+            oneTimeAttempt: true,
+            isActive: true
         });
         setEditingId(null);
     };
@@ -145,10 +148,28 @@ export default function AdminExams() {
             questions: exam.questions,
             startDate: exam.startDate ? new Date(exam.startDate).toISOString().slice(0, 16) : '',
             endDate: exam.endDate ? new Date(exam.endDate).toISOString().slice(0, 16) : '',
-            oneTimeAttempt: exam.oneTimeAttempt
+            oneTimeAttempt: exam.oneTimeAttempt,
+            isActive: exam.isActive ?? true
         });
         setEditingId(exam._id);
         setShowModal(true);
+    };
+
+    const handleStatusToggle = async (id: string, newStatus: boolean) => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('/api/admin/exams', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ _id: id, isActive: newStatus }),
+            });
+            if (res.ok) fetchExams();
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const handleDelete = async (id: string) => {
@@ -188,7 +209,13 @@ export default function AdminExams() {
                                 <span className="text-xs font-black text-accent uppercase tracking-[0.2em]">{exam.trackId?.title}</span>
                                 <h3 className="text-2xl font-bold text-white tracking-tight">{exam.title}</h3>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => handleStatusToggle(exam._id, !exam.isActive)}
+                                    className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${exam.isActive ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'}`}
+                                >
+                                    {exam.isActive ? 'Active' : 'Inactive'}
+                                </button>
                                 <button
                                     onClick={() => handleEdit(exam)}
                                     className="p-3 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white transition-all"
@@ -314,19 +341,33 @@ export default function AdminExams() {
                                                 />
                                             </div>
                                         </div>
-                                        <div className="flex items-center space-x-4 p-4 bg-white/5 rounded-2xl border border-white/10">
-                                            <label className="flex items-center cursor-pointer">
-                                                <input
-                                                    type="checkbox"
-                                                    className="hidden peer"
-                                                    checked={formData.oneTimeAttempt}
-                                                    onChange={(e) => setFormData({ ...formData, oneTimeAttempt: e.target.checked })}
-                                                />
-                                                <div className="w-6 h-6 border-2 border-accent/50 rounded-md mr-3 flex items-center justify-center peer-checked:bg-accent peer-checked:border-accent transition-all">
-                                                    {formData.oneTimeAttempt && <FiCheckCircle className="text-dark" />}
-                                                </div>
-                                                <span className="text-sm font-bold text-white">One-Time Attempt Only</span>
-                                            </label>
+                                        <div className="grid grid-cols-2 gap-6">
+                                            <div className="flex flex-col space-y-4">
+                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">One-Time Attempt</label>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setFormData({ ...formData, oneTimeAttempt: !formData.oneTimeAttempt })}
+                                                    className={`p-4 rounded-2xl border font-bold transition-all flex items-center justify-between ${formData.oneTimeAttempt ? 'border-accent bg-accent/10 text-accent' : 'border-white/10 bg-white/5 text-gray-500'}`}
+                                                >
+                                                    <span className="text-xs">Enabled</span>
+                                                    <div className={`w-10 h-5 rounded-full relative transition-colors ${formData.oneTimeAttempt ? 'bg-accent' : 'bg-gray-700'}`}>
+                                                        <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${formData.oneTimeAttempt ? 'right-1' : 'left-1'}`}></div>
+                                                    </div>
+                                                </button>
+                                            </div>
+                                            <div className="flex flex-col space-y-4">
+                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Exam Visibility</label>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
+                                                    className={`p-4 rounded-2xl border font-bold transition-all flex items-center justify-between ${formData.isActive ? 'border-green-500 bg-green-500/10 text-green-500' : 'border-red-500 bg-red-500/10 text-red-500'}`}
+                                                >
+                                                    <span className="text-xs">{formData.isActive ? 'Active' : 'Hidden'}</span>
+                                                    <div className={`w-10 h-5 rounded-full relative transition-colors ${formData.isActive ? 'bg-green-500' : 'bg-red-500'}`}>
+                                                        <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${formData.isActive ? 'right-1' : 'left-1'}`}></div>
+                                                    </div>
+                                                </button>
+                                            </div>
                                         </div>
                                         <div className="grid grid-cols-2 gap-6">
                                             <div className="space-y-2">

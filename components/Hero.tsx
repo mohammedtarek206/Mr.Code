@@ -48,7 +48,11 @@ export default function Hero() {
     '/team/sara.svg',
   ];
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
     const timer = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % images.length);
     }, 5000);
@@ -111,7 +115,7 @@ export default function Hero() {
             className="flex flex-wrap justify-center gap-4 mb-16"
           >
             <Link
-              href="/login"
+              href={isLoggedIn ? "/dashboard" : "/login"}
               className="px-8 py-4 bg-gradient-to-r from-primary to-accent rounded-full text-white font-bold hover:scale-105 transition-transform shadow-lg shadow-primary/50 text-lg"
             >
               Get Started
