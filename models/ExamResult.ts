@@ -6,6 +6,7 @@ export interface IExamResult extends Document {
     score: number;
     answers: number[]; // Index of selected options
     status: 'Pass' | 'Fail';
+    isAllowedRetake: boolean;
     completedAt: Date;
 }
 
@@ -20,6 +21,7 @@ const ExamResultSchema: Schema = new Schema(
             enum: ['Pass', 'Fail'],
             required: true,
         },
+        isAllowedRetake: { type: Boolean, default: false },
         completedAt: { type: Date, default: Date.now },
     },
     {

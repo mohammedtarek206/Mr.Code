@@ -29,6 +29,8 @@ export default function TakeExam() {
                     setExam(data);
                     setTimeLeft(data.duration * 60);
                     setAnswers(new Array(data.questions.length).fill(-1));
+                } else if (res.status === 403) {
+                    setExam({ error: data.error || 'هذا الامتحان متاح لمرة واحدة فقط. يرجى طلب الإذن من الإدارة لإعادته.' });
                 }
             } catch (err) {
                 console.error(err);
@@ -40,10 +42,10 @@ export default function TakeExam() {
     }, [params.id]);
 
     useEffect(() => {
-        if (timeLeft > 0 && !result && !loading) {
+        if (timeLeft > 0 && !result && !loading && exam && !exam.error) {
             const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
             return () => clearInterval(timer);
-        } else if (timeLeft === 0 && exam && !result && !loading) {
+        } else if (timeLeft === 0 && exam && !exam.error && !result && !loading) {
             handleSubmit();
         }
     }, [timeLeft, result, loading, exam]);
@@ -69,6 +71,7 @@ export default function TakeExam() {
             });
             const data = await res.json();
             if (res.ok) setResult(data);
+            else alert(data.error || 'Submission failed');
         } catch (err) {
             console.error(err);
         } finally {
@@ -83,43 +86,94 @@ export default function TakeExam() {
         </div>
     );
 
-    if (!exam) return (
-        <div className="min-h-screen bg-dark flex items-center justify-center">
-            <p className="text-red-500">Exam not found or failed to load.</p>
+    if (!exam || exam.error) return (
+        <div className="min-h-screen bg-dark flex items-center justify-center p-4">
+            <div className="glass p-12 rounded-[3.5rem] border border-white/5 text-center max-w-lg">
+                <FiXCircle className="text-red-500 mx-auto mb-6" size={64} />
+                <h2 className="text-2xl font-black text-white mb-4 italic uppercase">عذراً، لا يمكنك دخول الامتحان</h2>
+                <p className="text-gray-400 font-medium leading-relaxed mb-8">{exam?.error || 'الامتحان غير متاح حالياً.'}</p>
+                <button
+                    onClick={() => router.push('/exams')}
+                    className="w-full bg-white text-black py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl"
+                >
+                    العودة للامتحانات
+                </button>
+            </div>
         </div>
     );
 
     if (result) return (
-        <div className="min-h-screen bg-dark flex items-center justify-center p-4">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="glass w-full max-w-lg p-12 rounded-[3.5rem] border border-white/5 text-center space-y-8"
-            >
-                <div className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center ${result.status === 'Pass' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-                    {result.status === 'Pass' ? <FiCheckCircle size={48} /> : <FiXCircle size={48} />}
-                </div>
-                <div>
-                    <h2 className="text-4xl font-black tracking-tighter mb-2">{result.status === 'Pass' ? 'CONGRATULATIONS!' : 'KEEP PUSHING!'}</h2>
-                    <p className="text-gray-500 font-medium">You scored {result.score}% on <span className="text-white">{exam.title}</span></p>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
-                        <p className="text-[10px] font-black text-gray-500 uppercase mb-1">Pass Score</p>
-                        <p className="text-xl font-bold">{exam.passScore}%</p>
-                    </div>
-                    <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
-                        <p className="text-[10px] font-black text-gray-500 uppercase mb-1">Your Score</p>
-                        <p className={`text-xl font-bold ${result.status === 'Pass' ? 'text-green-500' : 'text-red-500'}`}>{result.score}%</p>
-                    </div>
-                </div>
-                <button
-                    onClick={() => router.push('/dashboard')}
-                    className="w-full bg-white text-black py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl"
+        <div className="min-h-screen bg-dark pt-32 pb-20 px-4 overflow-y-auto">
+            <div className="container mx-auto max-w-4xl text-right" dir="rtl">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="glass p-12 rounded-[3.5rem] border border-white/5 text-center space-y-8 mb-12"
                 >
-                    Back to Dashboard
-                </button>
-            </motion.div>
+                    <div className={`w-24 h-24 mx-auto rounded-full flex items-center justify-center ${result.status === 'Pass' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                        {result.status === 'Pass' ? <FiCheckCircle size={48} /> : <FiXCircle size={48} />}
+                    </div>
+                    <div>
+                        <h2 className="text-4xl font-black tracking-tighter mb-2 italic uppercase">{result.status === 'Pass' ? 'تهانينا!' : 'حاول مرة أخرى!'}</h2>
+                        <p className="text-gray-500 font-medium text-xl">لقد حصلت على <span className={`font-black ${result.status === 'Pass' ? 'text-green-500' : 'text-red-500'}`}>{result.score}%</span> في اختبار <span className="text-white">{exam.title}</span></p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
+                            <p className="text-[10px] font-black text-gray-500 uppercase mb-1">درجة النجاح</p>
+                            <p className="text-xl font-bold">{exam.passScore}%</p>
+                        </div>
+                        <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
+                            <p className="text-[10px] font-black text-gray-500 uppercase mb-1">درجتك</p>
+                            <p className={`text-xl font-bold ${result.status === 'Pass' ? 'text-green-500' : 'text-red-500'}`}>{result.score}%</p>
+                        </div>
+                    </div>
+                </motion.div>
+
+                {/* Question Breakdown */}
+                <div className="space-y-6">
+                    <h3 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-8 bg-white/5 p-4 rounded-2xl inline-block border border-white/10">مراجعة الإجابات</h3>
+                    {exam.questions.map((q: any, i: number) => {
+                        const isCorrect = result.answers[i] === q.correctOption;
+                        return (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                className={`p-8 rounded-[2.5rem] border ${isCorrect ? 'border-green-500/20 bg-green-500/5' : 'border-red-500/20 bg-red-500/5'}`}
+                            >
+                                <h4 className="text-white text-xl font-bold mb-6 flex items-center justify-between">
+                                    <span>س{i + 1}: {q.text}</span>
+                                    {isCorrect ? <FiCheckCircle className="text-green-500 shrink-0 mr-4" /> : <FiXCircle className="text-red-500 shrink-0 mr-4" />}
+                                </h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {q.options.map((opt: string, oIdx: number) => (
+                                        <div key={oIdx} className={`p-4 rounded-xl text-lg font-bold border transition-all ${oIdx === q.correctOption
+                                                ? 'bg-green-500/10 border-green-500 text-green-500'
+                                                : oIdx === result.answers[i]
+                                                    ? 'bg-red-500/10 border-red-500 text-red-500'
+                                                    : 'bg-white/5 border-white/10 text-gray-600'
+                                            }`}>
+                                            {opt}
+                                            {oIdx === q.correctOption && <span className="mr-3 text-xs font-black uppercase text-green-500">(الإجابة الصحيحة)</span>}
+                                            {oIdx === result.answers[i] && !isCorrect && <span className="mr-3 text-xs font-black uppercase text-red-500">(إجابتك)</span>}
+                                        </div>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+
+                <div className="mt-12 flex gap-4">
+                    <button
+                        onClick={() => router.push('/exams')}
+                        className="flex-1 bg-white text-black py-5 rounded-3xl font-black text-sm uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-2xl"
+                    >
+                        العودة للامتحانات
+                    </button>
+                </div>
+            </div>
         </div>
     );
 
@@ -172,8 +226,8 @@ export default function TakeExam() {
                                 key={idx}
                                 onClick={() => handleAnswer(idx)}
                                 className={`p-6 rounded-2xl text-left font-bold transition-all border flex items-center group ${answers[currentQuestion] === idx
-                                        ? 'bg-primary border-primary text-white shadow-xl shadow-primary/20'
-                                        : 'bg-white/5 border-white/5 text-gray-400 hover:border-white/20'
+                                    ? 'bg-primary border-primary text-white shadow-xl shadow-primary/20'
+                                    : 'bg-white/5 border-white/5 text-gray-400 hover:border-white/20'
                                     }`}
                             >
                                 <span className={`w-10 h-10 rounded-xl flex items-center justify-center mr-4 text-xs font-black transition-colors ${answers[currentQuestion] === idx ? 'bg-white text-black' : 'bg-white/5 text-gray-500'

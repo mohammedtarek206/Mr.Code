@@ -9,10 +9,14 @@ export interface IQuestion {
 export interface IExam extends Document {
     title: string;
     description: string;
-    trackId: mongoose.Types.ObjectId;
+    trackId?: mongoose.Types.ObjectId; // Optional for general exams
+    isGeneral: boolean;
     duration: number; // in minutes
     passScore: number;
     questions: IQuestion[];
+    startDate?: Date;
+    endDate?: Date;
+    oneTimeAttempt: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -21,7 +25,8 @@ const ExamSchema: Schema = new Schema(
     {
         title: { type: String, required: true },
         description: { type: String, required: true },
-        trackId: { type: Schema.Types.ObjectId, ref: 'Track', required: true },
+        trackId: { type: Schema.Types.ObjectId, ref: 'Track', required: false },
+        isGeneral: { type: Boolean, default: false },
         duration: { type: Number, required: true, default: 30 },
         passScore: { type: Number, required: true, default: 50 },
         questions: [
@@ -31,6 +36,9 @@ const ExamSchema: Schema = new Schema(
                 correctOption: { type: Number, required: true },
             },
         ],
+        startDate: { type: Date },
+        endDate: { type: Date },
+        oneTimeAttempt: { type: Boolean, default: true },
     },
     {
         timestamps: true,

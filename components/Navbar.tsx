@@ -36,6 +36,7 @@ export default function Navbar() {
   const navLinks = [
     { href: '/', label: { en: 'Home', ar: 'الرئيسية' } },
     { href: '/tracks', label: { en: 'Tracks', ar: 'المسارات' } },
+    { href: '/exams', label: { en: 'Exams', ar: 'الامتحانات' } },
     { href: '/books', label: { en: 'Books', ar: 'الكتب' } },
     { href: '/team', label: { en: 'Team', ar: 'الفريق' } },
     { href: '/projects', label: { en: 'Projects', ar: 'المشاريع' } },

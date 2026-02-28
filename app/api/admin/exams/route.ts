@@ -47,3 +47,23 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({ error: 'Failed to delete' }, { status: 500 });
     }
 }
+
+export async function PUT(request: NextRequest) {
+    try {
+        const user = await authenticateRequest(request);
+        if (!user || user.role !== 'admin') {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const data = await request.json();
+        const { _id, ...updateData } = data;
+
+        if (!_id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
+
+        await connectDB();
+        const exam = await Exam.findByIdAndUpdate(_id, updateData, { new: true });
+        return NextResponse.json(exam);
+    } catch (error) {
+        return NextResponse.json({ error: 'Failed to update exam' }, { status: 500 });
+    }
+}

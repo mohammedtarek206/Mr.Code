@@ -8,10 +8,14 @@ interface Exam {
     _id: string;
     title: string;
     description: string;
-    trackId: { _id: string, title: string };
+    trackId?: { _id: string, title: string };
+    isGeneral: boolean;
     duration: number;
     passScore: number;
     questions: any[];
+    startDate?: string;
+    endDate?: string;
+    oneTimeAttempt: boolean;
 }
 
 export default function AdminExams() {
@@ -19,14 +23,19 @@ export default function AdminExams() {
     const [tracks, setTracks] = useState<any[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<any>({
         title: '',
         description: '',
         trackId: '',
+        isGeneral: false,
         duration: 30,
         passScore: 50,
-        questions: [] as any[]
+        questions: [] as any[],
+        startDate: '',
+        endDate: '',
+        oneTimeAttempt: true
     });
+    const [editingId, setEditingId] = useState<string | null>(null);
 
     useEffect(() => {
         fetchExams();
@@ -79,25 +88,67 @@ export default function AdminExams() {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('/api/admin/exams', {
-                method: 'POST',
+            const url = '/api/admin/exams';
+            const method = editingId ? 'PUT' : 'POST';
+
+            const payload = {
+                ...formData,
+                _id: editingId,
+                trackId: formData.isGeneral ? undefined : formData.trackId
+            };
+
+            const res = await fetch(url, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(payload),
             });
 
             if (res.ok) {
                 fetchExams();
                 setShowModal(false);
-                setFormData({ title: '', description: '', trackId: '', duration: 30, passScore: 50, questions: [] });
+                resetForm();
             }
         } catch (err) {
             console.error(err);
         } finally {
             setLoading(false);
         }
+    };
+
+    const resetForm = () => {
+        setFormData({
+            title: '',
+            description: '',
+            trackId: '',
+            isGeneral: false,
+            duration: 30,
+            passScore: 50,
+            questions: [],
+            startDate: '',
+            endDate: '',
+            oneTimeAttempt: true
+        });
+        setEditingId(null);
+    };
+
+    const handleEdit = (exam: Exam) => {
+        setFormData({
+            title: exam.title,
+            description: exam.description,
+            trackId: exam.trackId?._id || '',
+            isGeneral: exam.isGeneral || false,
+            duration: exam.duration,
+            passScore: exam.passScore,
+            questions: exam.questions,
+            startDate: exam.startDate ? new Date(exam.startDate).toISOString().slice(0, 16) : '',
+            endDate: exam.endDate ? new Date(exam.endDate).toISOString().slice(0, 16) : '',
+            oneTimeAttempt: exam.oneTimeAttempt
+        });
+        setEditingId(exam._id);
+        setShowModal(true);
     };
 
     const handleDelete = async (id: string) => {
@@ -122,7 +173,7 @@ export default function AdminExams() {
                     <p className="text-gray-400">Create multiple choice exams for your tracks.</p>
                 </div>
                 <button
-                    onClick={() => setShowModal(true)}
+                    onClick={() => { resetForm(); setShowModal(true); }}
                     className="bg-accent hover:bg-accent/80 text-dark font-black px-6 py-3 rounded-xl flex items-center transition-all shadow-lg"
                 >
                     <FiPlus className="mr-2" /> New Exam
@@ -137,15 +188,35 @@ export default function AdminExams() {
                                 <span className="text-xs font-black text-accent uppercase tracking-[0.2em]">{exam.trackId?.title}</span>
                                 <h3 className="text-2xl font-bold text-white tracking-tight">{exam.title}</h3>
                             </div>
-                            <button
-                                onClick={() => handleDelete(exam._id)}
-                                className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all"
-                            >
-                                <FiTrash2 />
-                            </button>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => handleEdit(exam)}
+                                    className="p-3 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white transition-all"
+                                >
+                                    <FiPlus style={{ transform: 'rotate(45deg)' }} /> Edit
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(exam._id)}
+                                    className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all"
+                                >
+                                    <FiTrash2 />
+                                </button>
+                            </div>
                         </div>
 
-                        <div className="flex gap-6 mb-6">
+                        {exam.isGeneral && (
+                            <div className="mb-4 inline-block px-3 py-1 bg-accent/20 text-accent text-xs font-bold rounded-full uppercase tracking-widest">
+                                General Exam
+                            </div>
+                        )}
+
+                        <div className="flex flex-wrap gap-4 mb-6">
+                            {(exam.startDate || exam.endDate) && (
+                                <div className="flex items-center text-gray-400 text-xs w-full mb-2">
+                                    <FiClock className="mr-2 text-accent" />
+                                    {exam.startDate ? new Date(exam.startDate).toLocaleString() : 'Now'} - {exam.endDate ? new Date(exam.endDate).toLocaleString() : 'Forever'}
+                                </div>
+                            )}
                             <div className="flex items-center text-gray-400 text-sm">
                                 <FiClock className="mr-2 text-accent" /> {exam.duration} Min
                             </div>
@@ -192,20 +263,71 @@ export default function AdminExams() {
                                                 required
                                             />
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">For Track</label>
-                                            <select
-                                                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white outline-none focus:ring-2 focus:ring-accent/50 appearance-none"
-                                                value={formData.trackId}
-                                                onChange={(e) => setFormData({ ...formData, trackId: e.target.value })}
-                                                required
-                                            >
-                                                <option value="">Select a track...</option>
-                                                {tracks.map(t => <option key={t._id} value={t._id}>{t.title}</option>)}
-                                            </select>
+                                        <div className="flex items-center space-x-4 p-4 bg-white/5 rounded-2xl border border-white/10">
+                                            <label className="flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    className="hidden peer"
+                                                    checked={formData.isGeneral}
+                                                    onChange={(e) => setFormData({ ...formData, isGeneral: e.target.checked, trackId: e.target.checked ? '' : formData.trackId })}
+                                                />
+                                                <div className="w-6 h-6 border-2 border-accent/50 rounded-md mr-3 flex items-center justify-center peer-checked:bg-accent peer-checked:border-accent transition-all">
+                                                    {formData.isGeneral && <FiCheckCircle className="text-dark" />}
+                                                </div>
+                                                <span className="text-sm font-bold text-white">General Exam (No Track)</span>
+                                            </label>
                                         </div>
+
+                                        {!formData.isGeneral && (
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">For Track</label>
+                                                <select
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white outline-none focus:ring-2 focus:ring-accent/50 appearance-none"
+                                                    value={formData.trackId}
+                                                    onChange={(e) => setFormData({ ...formData, trackId: e.target.value })}
+                                                    required={!formData.isGeneral}
+                                                >
+                                                    <option value="">Select a track...</option>
+                                                    {tracks.map(t => <option key={t._id} value={t._id}>{t.title}</option>)}
+                                                </select>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="space-y-6">
+                                        <div className="grid grid-cols-2 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Start Date</label>
+                                                <input
+                                                    type="datetime-local"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-3 text-white outline-none focus:ring-2 focus:ring-accent/50 text-sm"
+                                                    value={formData.startDate}
+                                                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">End Date</label>
+                                                <input
+                                                    type="datetime-local"
+                                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-3 text-white outline-none focus:ring-2 focus:ring-accent/50 text-sm"
+                                                    value={formData.endDate}
+                                                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center space-x-4 p-4 bg-white/5 rounded-2xl border border-white/10">
+                                            <label className="flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    className="hidden peer"
+                                                    checked={formData.oneTimeAttempt}
+                                                    onChange={(e) => setFormData({ ...formData, oneTimeAttempt: e.target.checked })}
+                                                />
+                                                <div className="w-6 h-6 border-2 border-accent/50 rounded-md mr-3 flex items-center justify-center peer-checked:bg-accent peer-checked:border-accent transition-all">
+                                                    {formData.oneTimeAttempt && <FiCheckCircle className="text-dark" />}
+                                                </div>
+                                                <span className="text-sm font-bold text-white">One-Time Attempt Only</span>
+                                            </label>
+                                        </div>
                                         <div className="grid grid-cols-2 gap-6">
                                             <div className="space-y-2">
                                                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Duration (Min)</label>
@@ -253,11 +375,11 @@ export default function AdminExams() {
                                     </div>
 
                                     <div className="space-y-8">
-                                        {formData.questions.map((q, qIdx) => (
+                                        {formData.questions.map((q: any, qIdx: number) => (
                                             <div key={qIdx} className="p-8 border border-white/10 rounded-[2rem] bg-white/[0.02] space-y-6 relative group/q">
                                                 <button
                                                     type="button"
-                                                    onClick={() => setFormData({ ...formData, questions: formData.questions.filter((_, i) => i !== qIdx) })}
+                                                    onClick={() => setFormData({ ...formData, questions: formData.questions.filter((_: any, i: number) => i !== qIdx) })}
                                                     className="absolute top-6 right-6 text-gray-600 hover:text-red-500 transition-colors"
                                                 >
                                                     <FiTrash2 size={18} />
@@ -306,7 +428,7 @@ export default function AdminExams() {
                                     disabled={loading}
                                     className="w-full bg-accent text-dark py-6 rounded-3xl font-black text-xl shadow-2xl shadow-accent/20 hover:scale-[1.01] active:scale-100 transition-all uppercase tracking-tighter"
                                 >
-                                    {loading ? 'Creating Assessment...' : 'Publish Assessment'}
+                                    {loading ? (editingId ? 'Updating...' : 'Publishing...') : (editingId ? 'Update Assessment' : 'Publish Assessment')}
                                 </button>
                             </form>
                         </motion.div>

@@ -2,31 +2,34 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FiBook, FiKey, FiUsers, FiTrendingUp } from 'react-icons/fi';
+import { FiBook, FiKey, FiUsers, FiTrendingUp, FiFileText } from 'react-icons/fi';
 
 export default function AdminDashboard() {
-    const [counts, setCounts] = useState({ tracks: 0, students: 0, codes: 0 });
+    const [counts, setCounts] = useState({ tracks: 0, students: 0, codes: 0, exams: 0 });
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const [tracksRes, studentsRes, codesRes] = await Promise.all([
+                const [tracksRes, studentsRes, codesRes, examsRes] = await Promise.all([
                     fetch('/api/tracks'),
                     fetch('/api/admin/students', { headers: { 'Authorization': `Bearer ${token}` } }),
-                    fetch('/api/admin/codes', { headers: { 'Authorization': `Bearer ${token}` } })
+                    fetch('/api/admin/codes', { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch('/api/admin/exams', { headers: { 'Authorization': `Bearer ${token}` } })
                 ]);
 
-                const [tracks, students, codes] = await Promise.all([
+                const [tracks, students, codes, exams] = await Promise.all([
                     tracksRes.json(),
                     studentsRes.json(),
-                    codesRes.json()
+                    codesRes.json(),
+                    examsRes.json()
                 ]);
 
                 setCounts({
                     tracks: Array.isArray(tracks) ? tracks.length : 0,
                     students: Array.isArray(students) ? students.length : 0,
-                    codes: Array.isArray(codes) ? codes.length : 0
+                    codes: Array.isArray(codes) ? codes.length : 0,
+                    exams: Array.isArray(exams) ? exams.length : 0
                 });
             } catch (err) {
                 console.error('Failed to fetch stats:', err);
@@ -37,9 +40,9 @@ export default function AdminDashboard() {
 
     const stats = [
         { title: 'Total Tracks', value: counts.tracks.toString(), icon: FiBook, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+        { title: 'Active Exams', value: counts.exams.toString(), icon: FiFileText, color: 'text-accent', bg: 'bg-accent/10' },
         { title: 'Registered Users', value: counts.students.toString(), icon: FiUsers, color: 'text-green-500', bg: 'bg-green-500/10' },
-        { title: 'Codes Generated', value: counts.codes.toString(), icon: FiKey, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-        { title: 'Active Students', value: (counts.students - 1 > 0 ? counts.students - 1 : 0).toString(), icon: FiTrendingUp, color: 'text-orange-500', bg: 'bg-orange-500/10' },
+        { title: 'Access Codes', value: counts.codes.toString(), icon: FiKey, color: 'text-purple-500', bg: 'bg-purple-500/10' },
     ];
 
     return (

@@ -59,7 +59,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { title: 'Tracks', icon: FiVideo, href: '/admin/tracks' },
         { title: 'Books', icon: FiBook, href: '/admin/books' },
         { title: 'Exams', icon: FiFileText, href: '/admin/exams' },
-        { title: 'Results', icon: FiAward, href: '/admin/results' },
+        { title: 'Results', icon: FiAward, href: '/admin/exams/results' },
         { title: 'Partners', icon: FiImage, href: '/admin/partners' },
         { title: 'Projects', icon: FiGrid, href: '/admin/projects' },
         { title: 'Access Codes', icon: FiKey, href: '/admin/codes' },

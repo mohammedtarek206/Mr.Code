@@ -19,6 +19,27 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Exam not found' }, { status: 404 });
         }
 
+        // Check scheduling
+        const now = new Date();
+        if (exam.startDate && now < new Date(exam.startDate)) {
+            return NextResponse.json({ error: 'Exam has not started yet' }, { status: 403 });
+        }
+        if (exam.endDate && now > new Date(exam.endDate)) {
+            return NextResponse.json({ error: 'Exam has already ended' }, { status: 403 });
+        }
+
+        // Check previous attempts
+        const previousResult = await ExamResult.findOne({
+            studentId: user.userId,
+            examId: exam._id
+        }).sort({ createdAt: -1 });
+
+        if (exam.oneTimeAttempt && previousResult && !previousResult.isAllowedRetake) {
+            return NextResponse.json({
+                error: 'Single attempt allowed. Ask admin for retake permission.'
+            }, { status: 403 });
+        }
+
         if (!Array.isArray(answers) || answers.length !== exam.questions.length) {
             return NextResponse.json({ error: 'Invalid answers' }, { status: 400 });
         }
@@ -34,13 +55,25 @@ export async function POST(request: NextRequest) {
         const score = Math.round((correctCount / exam.questions.length) * 100);
         const status = score >= exam.passScore ? 'Pass' : 'Fail';
 
-        const result = await ExamResult.create({
-            studentId: user.userId,
-            examId: exam._id,
-            score,
-            answers,
-            status,
-        });
+        // Update existing result if retaking, or create new one
+        let result;
+        if (previousResult && previousResult.isAllowedRetake) {
+            result = await ExamResult.findByIdAndUpdate(previousResult._id, {
+                score,
+                answers,
+                status,
+                isAllowedRetake: false, // Reset after retake
+                completedAt: new Date()
+            }, { new: true });
+        } else {
+            result = await ExamResult.create({
+                studentId: user.userId,
+                examId: exam._id,
+                score,
+                answers,
+                status,
+            });
+        }
 
         return NextResponse.json(result, { status: 201 });
     } catch (error: any) {
