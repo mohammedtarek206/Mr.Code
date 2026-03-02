@@ -285,6 +285,7 @@ export default function AdminExams() {
                                             <input
                                                 type="text"
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white outline-none focus:ring-2 focus:ring-accent/50"
+                                                dir="auto"
                                                 value={formData.title}
                                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                                 required
@@ -395,6 +396,7 @@ export default function AdminExams() {
                                             <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Description</label>
                                             <textarea
                                                 className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white outline-none focus:ring-2 focus:ring-accent/50 h-[108px] resize-none"
+                                                dir="auto"
                                                 value={formData.description}
                                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                                 required
@@ -431,6 +433,7 @@ export default function AdminExams() {
                                                         type="text"
                                                         placeholder="Enter question text..."
                                                         className="w-full bg-white/5 border-b border-white/20 py-4 px-2 text-xl font-bold text-white outline-none focus:border-accent transition-colors"
+                                                        dir="auto"
                                                         value={q.text}
                                                         onChange={(e) => updateQuestion(qIdx, e.target.value)}
                                                         required
@@ -444,6 +447,7 @@ export default function AdminExams() {
                                                                 type="text"
                                                                 placeholder={`Option ${oIdx + 1}`}
                                                                 className="flex-1 bg-transparent text-white outline-none text-sm placeholder-gray-600"
+                                                                dir="auto"
                                                                 value={opt}
                                                                 onChange={(e) => updateOption(qIdx, oIdx, e.target.value)}
                                                                 required

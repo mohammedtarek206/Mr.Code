@@ -132,6 +132,7 @@ export default function AdminBooks() {
                                         type="text"
                                         required
                                         className="w-full bg-dark/50 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none"
+                                        dir="auto"
                                         value={formData.title}
                                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                     />
@@ -150,6 +151,7 @@ export default function AdminBooks() {
                                     <label className="text-gray-400 text-sm">Description</label>
                                     <textarea
                                         className="w-full bg-dark/50 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none h-24 resize-none"
+                                        dir="auto"
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     />

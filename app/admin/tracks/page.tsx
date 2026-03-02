@@ -217,6 +217,7 @@ export default function AdminTracks() {
                                             type="text"
                                             className="w-full bg-dark/50 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none"
                                             placeholder="e.g. Python Fundmentals"
+                                            dir="auto"
                                             value={formData.title}
                                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                             required
@@ -228,6 +229,7 @@ export default function AdminTracks() {
                                             type="text"
                                             className="w-full bg-dark/50 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none"
                                             placeholder="e.g. 4 Weeks"
+                                            dir="auto"
                                             value={formData.duration}
                                             onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
                                             required
@@ -240,6 +242,7 @@ export default function AdminTracks() {
                                     <textarea
                                         className="w-full bg-dark/50 border border-white/10 rounded-xl p-3 text-white focus:border-primary outline-none h-32 resize-none"
                                         placeholder="Describe what students will learn..."
+                                        dir="auto"
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                         required
@@ -275,6 +278,7 @@ export default function AdminTracks() {
                                                         type="text"
                                                         placeholder="Lesson Title"
                                                         className="bg-dark/60 border border-white/10 rounded-lg p-2 text-white outline-none"
+                                                        dir="auto"
                                                         value={lesson.title}
                                                         onChange={(e) => updateLesson(index, 'title', e.target.value)}
                                                         required
@@ -283,6 +287,7 @@ export default function AdminTracks() {
                                                         type="text"
                                                         placeholder="YouTube Video URL or ID"
                                                         className="bg-dark/60 border border-white/10 rounded-lg p-2 text-white outline-none"
+                                                        dir="auto"
                                                         value={lesson.videoUrl}
                                                         onChange={(e) => updateLesson(index, 'videoUrl', e.target.value)}
                                                         required
@@ -291,6 +296,7 @@ export default function AdminTracks() {
                                                 <textarea
                                                     placeholder="Short lesson description"
                                                     className="w-full bg-dark/60 border border-white/10 rounded-lg p-2 text-white outline-none h-20 resize-none"
+                                                    dir="auto"
                                                     value={lesson.description}
                                                     onChange={(e) => updateLesson(index, 'description', e.target.value)}
                                                 />
@@ -339,6 +345,7 @@ export default function AdminTracks() {
                                                         type="text"
                                                         placeholder="Book Title (e.g. Course PDF)"
                                                         className="bg-dark/60 border border-white/10 rounded-lg p-2 text-white outline-none text-sm"
+                                                        dir="auto"
                                                         value={book.title}
                                                         onChange={(e) => {
                                                             const updated = [...(formData.books || [])];

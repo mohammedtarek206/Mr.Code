@@ -87,7 +87,7 @@ export default function TracksPage() {
                     <IconComponent className="w-8 h-8 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-white mb-2">{track.title}</h3>
+                    <h3 className="text-2xl font-bold text-white mb-2" dir="auto">{track.title}</h3>
                     <div className="flex flex-wrap gap-2 mb-2">
                       <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold border border-primary/20">
                         {track.duration}
@@ -99,14 +99,14 @@ export default function TracksPage() {
                   </div>
                 </div>
 
-                <p className="text-gray-400 mb-6 line-clamp-2">{track.description}</p>
+                <p className="text-gray-400 mb-6 line-clamp-2" dir="auto">{track.description}</p>
 
                 <h4 className="font-bold text-gray-200 mb-4 text-sm uppercase tracking-wider">What you&apos;ll learn:</h4>
                 <ul className="space-y-3 mb-8">
                   {(track.curriculum || []).slice(0, 4).map((item, idx) => (
                     <li key={idx} className="flex items-start text-gray-400 text-sm">
                       <FiCheck className="w-4 h-4 text-accent mr-3 flex-shrink-0 mt-0.5" />
-                      <span>{item}</span>
+                      <span dir="auto">{item}</span>
                     </li>
                   ))}
                 </ul>

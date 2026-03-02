@@ -120,9 +120,9 @@ export default function TrackDetail() {
                             className="glass p-8 rounded-3xl border border-white/5"
                         >
                             <div className="flex justify-between items-start mb-6">
-                                <h1 className="text-3xl font-bold">{activeLesson?.title || track.title}</h1>
+                                <h1 className="text-3xl font-bold" dir="auto">{activeLesson?.title || track.title}</h1>
                             </div>
-                            <p className="text-gray-400 leading-relaxed min-h-[100px]">
+                            <p className="text-gray-400 leading-relaxed min-h-[100px]" dir="auto">
                                 {activeLesson?.description || track.description}
                             </p>
 

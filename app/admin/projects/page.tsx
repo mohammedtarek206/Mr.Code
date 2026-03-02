@@ -175,6 +175,7 @@ export default function AdminProjects() {
                                             type="text"
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:ring-2 focus:ring-primary/50 outline-none"
                                             placeholder="e.g. E-Commerce Dashboard"
+                                            dir="auto"
                                             value={formData.title}
                                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                             required
@@ -186,6 +187,7 @@ export default function AdminProjects() {
                                             type="text"
                                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:ring-2 focus:ring-primary/50 outline-none"
                                             placeholder="e.g. Ahmed Ali"
+                                            dir="auto"
                                             value={formData.studentName}
                                             onChange={(e) => setFormData({ ...formData, studentName: e.target.value })}
                                             required
@@ -244,6 +246,7 @@ export default function AdminProjects() {
                                     <textarea
                                         className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:ring-2 focus:ring-primary/50 outline-none h-32 resize-none"
                                         placeholder="Explain what makes this project special..."
+                                        dir="auto"
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                         required

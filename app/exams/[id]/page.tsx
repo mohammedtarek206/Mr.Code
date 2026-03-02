@@ -142,18 +142,20 @@ export default function TakeExam() {
                                 transition={{ delay: i * 0.1 }}
                                 className={`p-8 rounded-[2.5rem] border ${isCorrect ? 'border-green-500/20 bg-green-500/5' : 'border-red-500/20 bg-red-500/5'}`}
                             >
-                                <h4 className="text-white text-xl font-bold mb-6 flex items-center justify-between">
+                                <h4 className="text-white text-xl font-bold mb-6 flex items-center justify-between" dir="auto">
                                     <span>س{i + 1}: {q.text}</span>
                                     {isCorrect ? <FiCheckCircle className="text-green-500 shrink-0 mr-4" /> : <FiXCircle className="text-red-500 shrink-0 mr-4" />}
                                 </h4>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {q.options.map((opt: string, oIdx: number) => (
                                         <div key={oIdx} className={`p-4 rounded-xl text-lg font-bold border transition-all ${oIdx === q.correctOption
-                                                ? 'bg-green-500/10 border-green-500 text-green-500'
-                                                : oIdx === result.answers[i]
-                                                    ? 'bg-red-500/10 border-red-500 text-red-500'
-                                                    : 'bg-white/5 border-white/10 text-gray-600'
-                                            }`}>
+                                            ? 'bg-green-500/10 border-green-500 text-green-500'
+                                            : oIdx === result.answers[i]
+                                                ? 'bg-red-500/10 border-red-500 text-red-500'
+                                                : 'bg-white/5 border-white/10 text-gray-600'
+                                            }`}
+                                            dir="auto"
+                                        >
                                             {opt}
                                             {oIdx === q.correctOption && <span className="mr-3 text-xs font-black uppercase text-green-500">(الإجابة الصحيحة)</span>}
                                             {oIdx === result.answers[i] && !isCorrect && <span className="mr-3 text-xs font-black uppercase text-red-500">(إجابتك)</span>}
@@ -217,7 +219,7 @@ export default function TakeExam() {
                     className="glass p-12 rounded-[3.5rem] border border-white/5 space-y-12"
                 >
                     <div className="space-y-4">
-                        <h2 className="text-2xl font-bold leading-relaxed">{q.text}</h2>
+                        <h2 className="text-2xl font-bold leading-relaxed" dir="auto">{q.text}</h2>
                     </div>
 
                     <div className="grid gap-4">
@@ -234,7 +236,7 @@ export default function TakeExam() {
                                     }`}>
                                     {String.fromCharCode(65 + idx)}
                                 </span>
-                                {opt}
+                                <span dir="auto">{opt}</span>
                             </button>
                         ))}
                     </div>
