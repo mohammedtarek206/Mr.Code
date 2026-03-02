@@ -281,7 +281,7 @@ export default function AdminTracks() {
                                                     />
                                                     <input
                                                         type="text"
-                                                        placeholder="Dailymotion Video URL or ID"
+                                                        placeholder="YouTube Video URL or ID"
                                                         className="bg-dark/60 border border-white/10 rounded-lg p-2 text-white outline-none"
                                                         value={lesson.videoUrl}
                                                         onChange={(e) => updateLesson(index, 'videoUrl', e.target.value)}

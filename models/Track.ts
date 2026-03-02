@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface ILesson {
   title: string;
   description: string;
-  videoUrl: string; // Dailymotion URL or ID
+  videoUrl: string; // YouTube URL or ID
 }
 
 export interface ITrack extends Document {

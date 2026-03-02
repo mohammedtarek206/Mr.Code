@@ -61,9 +61,9 @@ export default function TrackDetail() {
         }
     }, [params.id, router]);
 
-    const getDailymotionId = (url: string) => {
+    const getYouTubeId = (url: string) => {
         if (!url) return '';
-        const match = url.match(/(?:dailymotion\.com(?:\/video|\/embed\/video)|\/dai\.ly)\/([a-zA-Z0-9]+)/);
+        const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
         return match ? match[1] : url;
     };
 
@@ -88,16 +88,23 @@ export default function TrackDetail() {
                         >
                             <AnimatePresence mode="wait">
                                 {activeLesson ? (
-                                    <motion.iframe
-                                        key={activeLesson.videoUrl}
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        src={`https://www.dailymotion.com/embed/video/${getDailymotionId(activeLesson.videoUrl)}?autoplay=1&ui-start-screen-info=0&ui-logo=0`}
-                                        className="w-full h-full border-none"
-                                        allowFullScreen
-                                        allow="autoplay; fullscreen"
-                                    ></motion.iframe>
+                                    <>
+                                        <motion.iframe
+                                            key={activeLesson.videoUrl}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            src={`https://www.youtube.com/embed/${getYouTubeId(activeLesson.videoUrl)}?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3&fs=1`}
+                                            className="w-full h-full border-none relative z-0"
+                                            allowFullScreen
+                                            allow="autoplay; fullscreen"
+                                            sandbox="allow-scripts allow-same-origin allow-presentation"
+                                        ></motion.iframe>
+                                        {/* Invisible overlay over the top of the video to block clicks on the title */}
+                                        <div className="absolute top-0 left-0 w-full h-[60px] z-10" onContextMenu={(e) => e.preventDefault()} />
+                                        {/* Invisible overlay over the right area to block clicks on the YouTube logo but avoid fullscreen button */}
+                                        <div className="absolute bottom-[40px] right-0 w-[100px] h-[60px] z-10" onContextMenu={(e) => e.preventDefault()} />
+                                    </>
                                 ) : (
                                     <div className="flex items-center justify-center h-full text-gray-500">
                                         Select a lesson to start learning
