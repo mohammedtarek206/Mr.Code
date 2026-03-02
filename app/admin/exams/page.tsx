@@ -207,7 +207,7 @@ export default function AdminExams() {
                         <div className="flex justify-between items-start mb-6">
                             <div className="space-y-1">
                                 <span className="text-xs font-black text-accent uppercase tracking-[0.2em]">{exam.trackId?.title}</span>
-                                <h3 className="text-2xl font-bold text-white tracking-tight">{exam.title}</h3>
+                                <h3 className="text-2xl font-bold text-white tracking-tight" dir="auto">{exam.title}</h3>
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
@@ -255,7 +255,7 @@ export default function AdminExams() {
                             </div>
                         </div>
 
-                        <p className="text-gray-400 text-sm line-clamp-2 leading-relaxed">{exam.description}</p>
+                        <p className="text-gray-400 text-sm line-clamp-2 leading-relaxed" dir="auto">{exam.description}</p>
                     </div>
                 ))}
             </div>

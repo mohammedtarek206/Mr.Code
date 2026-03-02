@@ -143,8 +143,8 @@ export default function AdminProjects() {
                                     </a>
                                 )}
                             </div>
-                            <h3 className="text-xl font-bold text-white tracking-tight">{project.title}</h3>
-                            <p className="text-gray-400 text-sm line-clamp-3 leading-relaxed">{project.description}</p>
+                            <h3 className="text-xl font-bold text-white tracking-tight" dir="auto">{project.title}</h3>
+                            <p className="text-gray-400 text-sm line-clamp-3 leading-relaxed" dir="auto">{project.description}</p>
                         </div>
                     </div>
                 ))}

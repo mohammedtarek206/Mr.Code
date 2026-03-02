@@ -166,7 +166,7 @@ export default function AdminTracks() {
                 {tracks.map((track) => (
                     <div key={track._id} className="glass p-6 rounded-2xl border border-white/5 relative overflow-hidden group hover:border-primary/50 transition-all">
                         <div className="flex justify-between items-start mb-4">
-                            <h3 className="text-xl font-bold text-white">{track.title}</h3>
+                            <h3 className="text-xl font-bold text-white" dir="auto">{track.title}</h3>
                             <div className="flex space-x-2">
                                 <button
                                     onClick={() => handleEditTrack(track)}
@@ -182,7 +182,7 @@ export default function AdminTracks() {
                                 </button>
                             </div>
                         </div>
-                        <p className="text-gray-400 mb-4 line-clamp-2 text-sm">{track.description}</p>
+                        <p className="text-gray-400 mb-4 line-clamp-2 text-sm" dir="auto">{track.description}</p>
                         <div className="flex flex-wrap gap-2 text-xs">
                             <span className="px-3 py-1 bg-primary/20 text-primary rounded-full font-bold">{track.level}</span>
                             <span className="px-3 py-1 bg-white/5 text-gray-300 rounded-full font-bold">{track.duration}</span>
