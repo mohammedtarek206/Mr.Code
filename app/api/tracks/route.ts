@@ -9,9 +9,9 @@ export async function GET(request: NextRequest) {
     await connectDB();
     const user = await authenticateRequest(request);
 
-    let query: any = { isActive: true };
+    let query: any = {};
 
-    // If student, filter by public or specifically assigned tracks
+    // For students, only show active and (public or assigned)
     if (user && user.role === 'student') {
       const fullUser = await User.findById((user as any).userId || user.userId);
       query = {
@@ -21,7 +21,11 @@ export async function GET(request: NextRequest) {
           { _id: { $in: (fullUser as any)?.accessibleTracks || [] } }
         ]
       };
+    } else if (!user) {
+      // Not logged in: only active and public
+      query = { isActive: true, isPublic: true };
     }
+    // Admin (user.role === 'admin') gets {} query -> all tracks
 
     const tracks = await Track.find(query).sort({ createdAt: -1 });
     return NextResponse.json(tracks, { status: 200 });

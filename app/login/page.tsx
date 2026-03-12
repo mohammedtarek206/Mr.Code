@@ -26,6 +26,9 @@ export default function StudentLoginPage() {
         return id;
     };
 
+    const [showTypeSelection, setShowTypeSelection] = useState(false);
+    const [tempToken, setTempToken] = useState('');
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -45,13 +48,12 @@ export default function StudentLoginPage() {
             const data = await res.json();
 
             if (res.ok) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
-                localStorage.setItem('userName', data.user.name);
-                localStorage.setItem('userRole', data.user.role);
-                localStorage.setItem('userGrade', data.user.grade || '');
-                localStorage.setItem('studentCode', code);
-                router.push('/dashboard'); // Direct to dashboard instead of tracks for better experience
+                if (data.user.needsTypeSelection) {
+                    setTempToken(data.token);
+                    setShowTypeSelection(true);
+                } else {
+                    completeLogin(data.token, data.user);
+                }
             } else {
                 setError(data.error || 'Login failed');
             }
@@ -61,6 +63,80 @@ export default function StudentLoginPage() {
             setLoading(false);
         }
     };
+
+    const handleSelectType = async (type: 'platform' | 'online') => {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/auth/update-type', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${tempToken}`
+                },
+                body: JSON.stringify({ studentType: type }),
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                // Update local user object and proceed
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                user.studentType = type;
+                completeLogin(tempToken, user);
+            } else {
+                setError('Failed to update student type');
+            }
+        } catch (err) {
+            setError('Connection error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const completeLogin = (token: string, user: any) => {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('userName', user.name);
+        localStorage.setItem('userRole', user.role);
+        localStorage.setItem('studentCode', code);
+        router.push('/dashboard');
+    };
+
+    if (showTypeSelection) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-dark p-4">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="glass p-8 rounded-3xl w-full max-w-lg border-t-4 border-accent text-center"
+                >
+                    <h2 className="text-3xl font-black text-white mb-4 tracking-tighter uppercase">Choose Your Category</h2>
+                    <p className="text-gray-400 mb-8 font-cairo">من فضلك اختر نوع اشتراكك للمتابعة</p>
+
+                    <div className="grid gap-4">
+                        <button
+                            onClick={() => handleSelectType('platform')}
+                            disabled={loading}
+                            className="bg-accent/10 hover:bg-accent/20 border-2 border-accent text-accent p-6 rounded-2xl transition-all group"
+                        >
+                            <span className="block text-2xl font-bold mb-1">طالب منصة</span>
+                            <span className="text-sm opacity-60">مشترك مسبقاً في المنصة</span>
+                        </button>
+
+                        <button
+                            onClick={() => handleSelectType('online')}
+                            disabled={loading}
+                            className="bg-primary/10 hover:bg-primary/20 border-2 border-primary text-primary p-6 rounded-2xl transition-all group"
+                        >
+                            <span className="block text-2xl font-bold mb-1">طالب أونلاين</span>
+                            <span className="text-sm opacity-60">مشترك عبر اليوتيوب أو الأونلاين</span>
+                        </button>
+                    </div>
+
+                    {loading && <div className="mt-6 text-white animate-pulse font-bold">جاري التحميل...</div>}
+                </motion.div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-dark p-4">

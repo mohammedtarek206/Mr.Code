@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
         await connectDB();
         const user = await authenticateRequest(request);
 
-        let query: any = { isActive: true };
+        let query: any = {};
 
         if (user && user.role === 'student') {
             const fullUser = await User.findById((user as any).userId || user.userId);
@@ -20,6 +20,8 @@ export async function GET(request: NextRequest) {
                     { _id: { $in: (fullUser as any)?.accessibleBooks || [] } }
                 ]
             };
+        } else if (!user) {
+            query = { isActive: true, isPublic: true };
         }
 
         const books = await Book.find(query).sort({ createdAt: -1 });

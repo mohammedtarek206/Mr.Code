@@ -21,6 +21,9 @@ export async function GET(
 
         // Accessibility check for students
         if (user && user.role === 'student') {
+            if (track.isActive === false) {
+                return NextResponse.json({ error: 'This track is currently deactivatied' }, { status: 403 });
+            }
             const fullUser = await User.findById((user as any).userId || user.userId);
             const isAccessible = track.isPublic || ((fullUser as any)?.accessibleTracks || []).map((id: any) => id.toString()).includes(track._id.toString());
             if (!isAccessible) {
