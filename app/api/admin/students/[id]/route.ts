@@ -13,7 +13,8 @@ export async function PATCH(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { action } = await request.json();
+        const body = await request.json();
+        const { action } = body;
         const { id } = params;
 
         await connectDB();
@@ -31,7 +32,7 @@ export async function PATCH(
             targetUser.isBanned = false;
             targetUser.deviceId = undefined;
         } else if (action === 'updateDetails') {
-            const { studentType, accessibleTracks, accessibleBooks, accessibleExams } = await request.json();
+            const { studentType, accessibleTracks, accessibleBooks, accessibleExams } = body;
             if (studentType) targetUser.studentType = studentType;
             if (accessibleTracks) targetUser.accessibleTracks = accessibleTracks;
             if (accessibleBooks) targetUser.accessibleBooks = accessibleBooks;

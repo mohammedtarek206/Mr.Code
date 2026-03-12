@@ -29,7 +29,7 @@ export async function GET(
         // Accessibility check for students
         if (user.role === 'student') {
             const fullUser = await User.findById((user as any).userId || user.userId);
-            const isAccessible = exam.isPublic || (fullUser?.accessibleExams || []).map(id => id.toString()).includes(exam._id.toString());
+            const isAccessible = exam.isPublic || ((fullUser as any)?.accessibleExams || []).map((id: any) => id.toString()).includes(exam._id.toString());
             if (!isAccessible) {
                 return NextResponse.json({ error: 'You do not have access to this exam' }, { status: 403 });
             }
