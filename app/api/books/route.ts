@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
                 isActive: true,
                 $or: [
                     { isPublic: true },
-                    { _id: { $in: fullUser?.accessibleBooks || [] } }
+                    { _id: { $in: (fullUser as any)?.accessibleBooks || [] } }
                 ]
             };
         }

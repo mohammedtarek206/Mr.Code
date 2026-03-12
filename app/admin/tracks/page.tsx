@@ -30,12 +30,13 @@ export default function AdminTracks() {
     const [loading, setLoading] = useState(false);
     const [editingTrack, setEditingTrack] = useState<Track | null>(null);
 
-    // Form State
     const [formData, setFormData] = useState<Track>({
         title: '',
         description: '',
         icon: 'FiCode',
         level: 'Beginner',
+        duration: '',
+        price: 0,
         isActive: true,
         isPublic: false,
         lessons: [],
@@ -124,9 +125,12 @@ export default function AdminTracks() {
                     description: '',
                     icon: 'FiCode',
                     level: 'Beginner',
+                    duration: '',
+                    price: 0,
                     isActive: true,
                     isPublic: false,
-                    lessons: []
+                    lessons: [],
+                    books: []
                 });
             }
         } catch (err) {

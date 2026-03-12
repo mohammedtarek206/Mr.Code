@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
         isActive: true,
         $or: [
           { isPublic: true },
-          { _id: { $in: fullUser?.accessibleTracks || [] } }
+          { _id: { $in: (fullUser as any)?.accessibleTracks || [] } }
         ]
       };
     }

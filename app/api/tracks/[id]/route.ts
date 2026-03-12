@@ -22,13 +22,13 @@ export async function GET(
         // Accessibility check for students
         if (user && user.role === 'student') {
             const fullUser = await User.findById((user as any).userId || user.userId);
-            const isAccessible = track.isPublic || (fullUser?.accessibleTracks || []).map(id => id.toString()).includes(track._id.toString());
+            const isAccessible = track.isPublic || ((fullUser as any)?.accessibleTracks || []).map((id: any) => id.toString()).includes(track._id.toString());
             if (!isAccessible) {
                 return NextResponse.json({ error: 'You do not have access to this track' }, { status: 403 });
             }
 
             // Filter exams: only active and (public or assigned)
-            const assignedExams = (fullUser?.accessibleExams || []).map(id => id.toString());
+            const assignedExams = ((fullUser as any)?.accessibleExams || []).map((id: any) => id.toString());
             const exams = await Exam.find({
                 trackId: params.id,
                 isActive: true,
