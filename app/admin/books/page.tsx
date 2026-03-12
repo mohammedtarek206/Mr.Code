@@ -10,6 +10,8 @@ interface Book {
     description: string;
     driveLink: string;
     category: string;
+    isActive: boolean;
+    isPublic: boolean;
 }
 
 export default function AdminBooks() {
@@ -20,7 +22,9 @@ export default function AdminBooks() {
         title: '',
         description: '',
         driveLink: '',
-        category: 'General'
+        category: 'General',
+        isActive: true,
+        isPublic: false
     });
 
     useEffect(() => {
@@ -67,7 +71,7 @@ export default function AdminBooks() {
             if (res.ok) {
                 fetchBooks();
                 setShowModal(false);
-                setFormData({ title: '', description: '', driveLink: '', category: 'General' });
+                setFormData({ title: '', description: '', driveLink: '', category: 'General', isActive: true, isPublic: false });
             }
         } catch (err) {
             console.error(err);
@@ -103,8 +107,13 @@ export default function AdminBooks() {
                         <FiBook className="text-primary w-10 h-10 mb-4" />
                         <h3 className="text-xl font-bold text-white mb-2" dir="auto">{book.title}</h3>
                         <p className="text-gray-400 text-sm mb-4 line-clamp-2" dir="auto">{book.description}</p>
-                        <div className="flex items-center text-xs text-gray-500">
-                            <span className="px-2 py-1 bg-white/5 rounded-full">{book.category}</span>
+                        <div className="flex items-center gap-2 text-xs">
+                            <span className="px-2 py-1 bg-white/5 text-gray-400 rounded-full">{book.category}</span>
+                            {book.isPublic ? (
+                                <span className="px-2 py-1 bg-green-500/10 text-green-500 rounded-full">Public</span>
+                            ) : (
+                                <span className="px-2 py-1 bg-yellow-500/10 text-yellow-500 rounded-full">Private</span>
+                            )}
                         </div>
                     </div>
                 ))}
@@ -155,6 +164,26 @@ export default function AdminBooks() {
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     />
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <label className="text-white flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.isPublic}
+                                            onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                                            className="w-5 h-5 accent-primary"
+                                        />
+                                        Public / عام
+                                    </label>
+                                    <label className="text-white flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.isActive}
+                                            onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                                            className="w-5 h-5 accent-green-500"
+                                        />
+                                        Active / نشط
+                                    </label>
                                 </div>
                                 <button
                                     type="submit"

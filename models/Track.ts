@@ -18,6 +18,7 @@ export interface ITrack extends Document {
   price: number;
   imageUrl: string;
   isActive: boolean;
+  isPublic: boolean;
   books: { title: string; driveLink: string }[];
   createdAt: Date;
   updatedAt: Date;
@@ -46,6 +47,7 @@ const TrackSchema: Schema = new Schema(
     price: { type: Number, default: 0 },
     imageUrl: { type: String },
     isActive: { type: Boolean, default: true },
+    isPublic: { type: Boolean, default: false },
     books: [
       {
         title: { type: String, required: true },

@@ -4,6 +4,10 @@ export interface IUser extends Document {
   name: string;
   email?: string;
   password?: string;
+  studentType: 'platform' | 'online' | 'unassigned';
+  accessibleTracks: mongoose.Types.ObjectId[];
+  accessibleBooks: mongoose.Types.ObjectId[];
+  accessibleExams: mongoose.Types.ObjectId[];
   role: 'admin' | 'student';
   accessCode?: string; // For students login
   isActive: boolean;
@@ -27,6 +31,14 @@ const UserSchema: Schema = new Schema(
       enum: ['admin', 'student'],
       default: 'student',
     },
+    studentType: {
+      type: String,
+      enum: ['platform', 'online', 'unassigned'],
+      default: 'unassigned',
+    },
+    accessibleTracks: [{ type: Schema.Types.ObjectId, ref: 'Track' }],
+    accessibleBooks: [{ type: Schema.Types.ObjectId, ref: 'Book' }],
+    accessibleExams: [{ type: Schema.Types.ObjectId, ref: 'Exam' }],
     accessCode: { type: String, unique: true, sparse: true },
     isActive: { type: Boolean, default: true },
     phone: { type: String },

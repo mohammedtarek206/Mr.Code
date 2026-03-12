@@ -11,6 +11,7 @@ export interface IExam extends Document {
     description: string;
     trackId?: mongoose.Types.ObjectId; // Optional for general exams
     isGeneral: boolean;
+    isPublic: boolean;
     duration: number; // in minutes
     passScore: number;
     questions: IQuestion[];
@@ -28,6 +29,7 @@ const ExamSchema: Schema = new Schema(
         description: { type: String, required: true },
         trackId: { type: Schema.Types.ObjectId, ref: 'Track', required: false },
         isGeneral: { type: Boolean, default: false },
+        isPublic: { type: Boolean, default: false },
         duration: { type: Number, required: true, default: 30 },
         passScore: { type: Number, required: true, default: 50 },
         questions: [

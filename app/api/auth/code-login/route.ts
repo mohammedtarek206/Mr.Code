@@ -56,7 +56,12 @@ export async function POST(request: NextRequest) {
                 {
                     message: 'Login successful',
                     token,
-                    user: { name: user.name, role: user.role }
+                    user: {
+                        name: user.name,
+                        role: user.role,
+                        studentType: user.studentType,
+                        needsTypeSelection: user.role === 'student' && user.studentType === 'unassigned'
+                    }
                 },
                 { status: 200 }
             );
@@ -112,7 +117,12 @@ export async function POST(request: NextRequest) {
             {
                 message: 'Login successful',
                 token,
-                user: { name: user.name, role: user.role }
+                user: {
+                    name: user.name,
+                    role: user.role,
+                    studentType: user.studentType,
+                    needsTypeSelection: true
+                }
             },
             { status: 200 }
         );

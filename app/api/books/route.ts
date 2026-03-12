@@ -1,12 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Book from '@/models/Book';
+import User from '@/models/User';
 import { authenticateRequest } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
     try {
         await connectDB();
-        const books = await Book.find({ isActive: true }).sort({ createdAt: -1 });
+        const user = await authenticateRequest(request);
+
+        let query: any = { isActive: true };
+
+        if (user && user.role === 'student') {
+            const fullUser = await User.findById((user as any).userId || user.userId);
+            query = {
+                isActive: true,
+                $or: [
+                    { isPublic: true },
+                    { _id: { $in: fullUser?.accessibleBooks || [] } }
+                ]
+            };
+        }
+
+        const books = await Book.find(query).sort({ createdAt: -1 });
         return NextResponse.json(books);
     } catch (error) {
         return NextResponse.json({ error: 'Failed' }, { status: 500 });

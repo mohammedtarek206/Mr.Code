@@ -18,6 +18,8 @@ interface Track {
     level: string;
     duration: string;
     price: number;
+    isActive: boolean;
+    isPublic: boolean;
     lessons: Lesson[];
     books?: { title: string; driveLink: string }[];
 }
@@ -34,8 +36,8 @@ export default function AdminTracks() {
         description: '',
         icon: 'FiCode',
         level: 'Beginner',
-        duration: '',
-        price: 0,
+        isActive: true,
+        isPublic: false,
         lessons: [],
         books: []
     });
@@ -122,8 +124,8 @@ export default function AdminTracks() {
                     description: '',
                     icon: 'FiCode',
                     level: 'Beginner',
-                    duration: '',
-                    price: 0,
+                    isActive: true,
+                    isPublic: false,
                     lessons: []
                 });
             }
@@ -151,6 +153,8 @@ export default function AdminTracks() {
                             level: 'Beginner',
                             duration: '',
                             price: 0,
+                            isActive: true,
+                            isPublic: false,
                             lessons: [],
                             books: []
                         });
@@ -187,6 +191,11 @@ export default function AdminTracks() {
                             <span className="px-3 py-1 bg-primary/20 text-primary rounded-full font-bold">{track.level}</span>
                             <span className="px-3 py-1 bg-white/5 text-gray-300 rounded-full font-bold">{track.duration}</span>
                             <span className="px-3 py-1 bg-accent/20 text-accent rounded-full font-bold">{track.lessons.length} Lessons</span>
+                            {track.isPublic ? (
+                                <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full font-bold">Public/عام</span>
+                            ) : (
+                                <span className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full font-bold">Private/خاص</span>
+                            )}
                         </div>
                     </div>
                 ))}
@@ -234,6 +243,26 @@ export default function AdminTracks() {
                                             onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
                                             required
                                         />
+                                    </div>
+                                    <div className="flex items-center gap-4 bg-dark/30 p-4 rounded-xl border border-white/5">
+                                        <label className="text-white flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.isPublic}
+                                                onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                                                className="w-5 h-5 accent-primary"
+                                            />
+                                            Public Track / محتوى عام لكل الطلاب
+                                        </label>
+                                        <label className="text-white flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.isActive}
+                                                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                                                className="w-5 h-5 accent-green-500"
+                                            />
+                                            Active / نشط
+                                        </label>
                                     </div>
                                 </div>
 

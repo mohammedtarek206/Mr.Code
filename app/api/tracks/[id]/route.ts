@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Track from '@/models/Track';
 import Exam from '@/models/Exam';
+import User from '@/models/User';
 import { authenticateRequest } from '@/lib/auth';
 
 export async function GET(
@@ -10,10 +11,37 @@ export async function GET(
 ) {
     try {
         await connectDB();
+        const user = await authenticateRequest(request);
+
         const track = await Track.findById(params.id);
 
         if (!track) {
             return NextResponse.json({ error: 'Track not found' }, { status: 404 });
+        }
+
+        // Accessibility check for students
+        if (user && user.role === 'student') {
+            const fullUser = await User.findById((user as any).userId || user.userId);
+            const isAccessible = track.isPublic || (fullUser?.accessibleTracks || []).map(id => id.toString()).includes(track._id.toString());
+            if (!isAccessible) {
+                return NextResponse.json({ error: 'You do not have access to this track' }, { status: 403 });
+            }
+
+            // Filter exams: only active and (public or assigned)
+            const assignedExams = (fullUser?.accessibleExams || []).map(id => id.toString());
+            const exams = await Exam.find({
+                trackId: params.id,
+                isActive: true,
+                $or: [
+                    { isPublic: true },
+                    { _id: { $in: assignedExams } }
+                ]
+            });
+
+            return NextResponse.json({
+                ...track.toObject(),
+                exams
+            }, { status: 200 });
         }
 
         const exams = await Exam.find({ trackId: params.id });

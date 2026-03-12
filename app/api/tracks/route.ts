@@ -1,12 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Track from '@/models/Track';
+import User from '@/models/User';
 import { authenticateRequest } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
-    const tracks = await Track.find({ isActive: true }).sort({ createdAt: -1 });
+    const user = await authenticateRequest(request);
+
+    let query: any = { isActive: true };
+
+    // If student, filter by public or specifically assigned tracks
+    if (user && user.role === 'student') {
+      const fullUser = await User.findById((user as any).userId || user.userId);
+      query = {
+        isActive: true,
+        $or: [
+          { isPublic: true },
+          { _id: { $in: fullUser?.accessibleTracks || [] } }
+        ]
+      };
+    }
+
+    const tracks = await Track.find(query).sort({ createdAt: -1 });
     return NextResponse.json(tracks, { status: 200 });
   } catch (error: any) {
     console.error('Tracks API error:', error);

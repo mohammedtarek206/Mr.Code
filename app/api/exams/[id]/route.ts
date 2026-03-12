@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Exam from '@/models/Exam';
 import ExamResult from '@/models/ExamResult';
+import User from '@/models/User';
 import { authenticateRequest } from '@/lib/auth';
 
 export async function GET(
@@ -23,6 +24,15 @@ export async function GET(
 
         if (exam.isActive === false) {
             return NextResponse.json({ error: 'This exam is currently deactivated.' }, { status: 403 });
+        }
+
+        // Accessibility check for students
+        if (user.role === 'student') {
+            const fullUser = await User.findById((user as any).userId || user.userId);
+            const isAccessible = exam.isPublic || (fullUser?.accessibleExams || []).map(id => id.toString()).includes(exam._id.toString());
+            if (!isAccessible) {
+                return NextResponse.json({ error: 'You do not have access to this exam' }, { status: 403 });
+            }
         }
 
         // Check scheduling

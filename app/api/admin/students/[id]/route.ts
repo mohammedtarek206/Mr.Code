@@ -30,6 +30,12 @@ export async function PATCH(
         } else if (action === 'unban') {
             targetUser.isBanned = false;
             targetUser.deviceId = undefined;
+        } else if (action === 'updateDetails') {
+            const { studentType, accessibleTracks, accessibleBooks, accessibleExams } = await request.json();
+            if (studentType) targetUser.studentType = studentType;
+            if (accessibleTracks) targetUser.accessibleTracks = accessibleTracks;
+            if (accessibleBooks) targetUser.accessibleBooks = accessibleBooks;
+            if (accessibleExams) targetUser.accessibleExams = accessibleExams;
         }
 
         await targetUser.save();

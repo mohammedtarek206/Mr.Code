@@ -17,6 +17,7 @@ interface Exam {
     endDate?: string;
     oneTimeAttempt: boolean;
     isActive: boolean;
+    isPublic: boolean;
 }
 
 export default function AdminExams() {
@@ -35,7 +36,8 @@ export default function AdminExams() {
         startDate: '',
         endDate: '',
         oneTimeAttempt: true,
-        isActive: true
+        isActive: true,
+        isPublic: false
     });
     const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -132,7 +134,8 @@ export default function AdminExams() {
             startDate: '',
             endDate: '',
             oneTimeAttempt: true,
-            isActive: true
+            isActive: true,
+            isPublic: false
         });
         setEditingId(null);
     };
@@ -149,7 +152,8 @@ export default function AdminExams() {
             startDate: exam.startDate ? new Date(exam.startDate).toISOString().slice(0, 16) : '',
             endDate: exam.endDate ? new Date(exam.endDate).toISOString().slice(0, 16) : '',
             oneTimeAttempt: exam.oneTimeAttempt,
-            isActive: exam.isActive ?? true
+            isActive: exam.isActive ?? true,
+            isPublic: exam.isPublic || false
         });
         setEditingId(exam._id);
         setShowModal(true);
@@ -231,11 +235,22 @@ export default function AdminExams() {
                             </div>
                         </div>
 
-                        {exam.isGeneral && (
-                            <div className="mb-4 inline-block px-3 py-1 bg-accent/20 text-accent text-xs font-bold rounded-full uppercase tracking-widest">
-                                General Exam
-                            </div>
-                        )}
+                        <div className="flex gap-2 mb-4">
+                            {exam.isGeneral && (
+                                <div className="px-3 py-1 bg-accent/20 text-accent text-xs font-bold rounded-full uppercase tracking-widest">
+                                    General Exam
+                                </div>
+                            )}
+                            {exam.isPublic ? (
+                                <div className="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full uppercase tracking-widest">
+                                    Public
+                                </div>
+                            ) : (
+                                <div className="px-3 py-1 bg-yellow-500/20 text-yellow-400 text-xs font-bold rounded-full uppercase tracking-widest">
+                                    Private
+                                </div>
+                            )}
+                        </div>
 
                         <div className="flex flex-wrap gap-4 mb-6">
                             {(exam.startDate || exam.endDate) && (
@@ -358,16 +373,28 @@ export default function AdminExams() {
                                             </div>
                                             <div className="flex flex-col space-y-4">
                                                 <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Exam Visibility</label>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
-                                                    className={`p-4 rounded-2xl border font-bold transition-all flex items-center justify-between ${formData.isActive ? 'border-green-500 bg-green-500/10 text-green-500' : 'border-red-500 bg-red-500/10 text-red-500'}`}
-                                                >
-                                                    <span className="text-xs">{formData.isActive ? 'Active' : 'Hidden'}</span>
-                                                    <div className={`w-10 h-5 rounded-full relative transition-colors ${formData.isActive ? 'bg-green-500' : 'bg-red-500'}`}>
-                                                        <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${formData.isActive ? 'right-1' : 'left-1'}`}></div>
-                                                    </div>
-                                                </button>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
+                                                        className={`flex-1 p-4 rounded-2xl border font-bold transition-all flex items-center justify-between ${formData.isActive ? 'border-green-500 bg-green-500/10 text-green-500' : 'border-red-500 bg-red-500/10 text-red-500'}`}
+                                                    >
+                                                        <span className="text-[10px]">Active</span>
+                                                        <div className={`w-8 h-4 rounded-full relative transition-colors ${formData.isActive ? 'bg-green-500' : 'bg-red-500'}`}>
+                                                            <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all ${formData.isActive ? 'right-1' : 'left-1'}`}></div>
+                                                        </div>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setFormData({ ...formData, isPublic: !formData.isPublic })}
+                                                        className={`flex-1 p-4 rounded-2xl border font-bold transition-all flex items-center justify-between ${formData.isPublic ? 'border-primary bg-primary/10 text-primary' : 'border-white/10 bg-white/5 text-gray-500'}`}
+                                                    >
+                                                        <span className="text-[10px]">Public</span>
+                                                        <div className={`w-8 h-4 rounded-full relative transition-colors ${formData.isPublic ? 'bg-primary' : 'bg-gray-700'}`}>
+                                                            <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all ${formData.isPublic ? 'right-1' : 'left-1'}`}></div>
+                                                        </div>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-2 gap-6">

@@ -6,6 +6,7 @@ export interface IBook extends Document {
     driveLink: string;
     category?: string;
     isActive: boolean;
+    isPublic: boolean;
     createdAt: Date;
 }
 
@@ -16,6 +17,7 @@ const BookSchema: Schema = new Schema(
         driveLink: { type: String, required: true },
         category: { type: String, default: 'General' },
         isActive: { type: Boolean, default: true },
+        isPublic: { type: Boolean, default: false },
     },
     {
         timestamps: true,
