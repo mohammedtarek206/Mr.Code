@@ -41,23 +41,12 @@ const BinaryBackground = () => {
 };
 
 export default function Hero() {
-  const [currentImage, setCurrentImage] = useState(0);
-  const images = [
-    '/team/mohammed.svg',
-    '/team/fatima.svg',
-    '/team/sara.svg',
-  ];
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
-    const timer = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [images.length]);
+  }, []);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-dark via-dark-light to-dark pt-20">
@@ -71,18 +60,14 @@ export default function Hero() {
             {/* Image Carousel */}
             <div className="relative w-48 h-48 md:w-64 md:h-64 mx-auto mb-8 rounded-full bg-gradient-to-br from-primary via-accent to-cyber p-1 shadow-[0_0_50px_rgba(0,163,255,0.3)]">
               <div className="w-full h-full rounded-full bg-dark overflow-hidden relative">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={currentImage}
-                    src={images[currentImage]}
-                    alt="Mr.Code - Mohamed Tarek"
-                    initial={{ opacity: 0, scale: 1.1 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.8 }}
-                    className="w-full h-full object-cover"
-                  />
-                </AnimatePresence>
+                <motion.img
+                  src="/WhatsApp Image 2026-07-03 at 4.48.27 AM.jpeg"
+                  alt="Mr.Code - Mohamed Tarek"
+                  initial={{ opacity: 0, scale: 1.1 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8 }}
+                  className="w-full h-full object-cover"
+                />
               </div>
               {/* Decorative Rings */}
               <div className="absolute -inset-4 border border-primary/20 rounded-full animate-spin-slow"></div>

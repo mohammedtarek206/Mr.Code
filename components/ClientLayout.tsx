@@ -3,6 +3,10 @@
 import { usePathname } from 'next/navigation';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import InstallPrompt from './InstallPrompt';
+import IOSInstallGuide from './IOSInstallGuide';
+import SplashScreen from './SplashScreen';
+import BottomNav from './BottomNav';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -10,9 +14,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
     return (
         <>
+            <SplashScreen />
             {!isAdmin && <Navbar />}
-            <main className={!isAdmin ? 'pt-20' : ''}>{children}</main>
+            <main className={!isAdmin ? 'pt-20 pb-16 md:pb-0' : ''}>{children}</main>
             {!isAdmin && <Footer />}
+            {!isAdmin && <BottomNav />}
+            <InstallPrompt />
+            <IOSInstallGuide />
         </>
     );
 }

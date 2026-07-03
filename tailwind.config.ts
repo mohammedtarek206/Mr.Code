@@ -11,14 +11,19 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#0066FF',
-          dark: '#0044CC',
-          light: '#3385FF',
+          DEFAULT: '#4F46E5',
+          dark: '#3730A3',
+          light: '#818CF8',
+        },
+        secondary: {
+          DEFAULT: '#7C3AED',
+          dark: '#5B21B6',
+          light: '#A78BFA',
         },
         accent: {
-          DEFAULT: '#00FF88',
-          dark: '#00CC6E',
-          light: '#33FFAA',
+          DEFAULT: '#06B6D4',
+          dark: '#0891B2',
+          light: '#22D3EE',
         },
         cyber: {
           DEFAULT: '#8B5CF6',
@@ -26,14 +31,24 @@ const config: Config = {
           light: '#A78BFA',
         },
         dark: {
-          DEFAULT: '#0A0E27',
-          light: '#1A1F3A',
+          DEFAULT: '#0A0F1C',
+          light: '#1A233A',
         },
       },
       fontFamily: {
         arabic: ['Cairo', 'sans-serif'],
         english: ['Poppins', 'Inter', 'sans-serif'],
       },
+      animation: {
+        'spin-slow': 'spin 20s linear infinite',
+        'reverse-spin-slow': 'reverse-spin-slow 15s linear infinite',
+      },
+      keyframes: {
+        'reverse-spin-slow': {
+          from: { transform: 'rotate(360deg)' },
+          to: { transform: 'rotate(0deg)' },
+        }
+      }
     },
   },
   plugins: [],
