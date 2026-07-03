@@ -4,6 +4,8 @@ import Exam from '@/models/Exam';
 import ExamResult from '@/models/ExamResult';
 import { authenticateRequest } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
     try {
         const user = await authenticateRequest(request);

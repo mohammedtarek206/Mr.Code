@@ -4,6 +4,8 @@ import Book from '@/models/Book';
 import User from '@/models/User';
 import { authenticateRequest } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
     try {
         await connectDB();

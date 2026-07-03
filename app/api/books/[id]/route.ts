@@ -3,6 +3,8 @@ import connectDB from '@/lib/mongodb';
 import Book from '@/models/Book';
 import { authenticateRequest } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function DELETE(
     request: NextRequest,
     { params }: { params: { id: string } }

@@ -4,6 +4,8 @@ import connectDB from '@/lib/mongodb';
 import FreeVideo from '@/models/FreeVideo';
 import { authenticateRequest } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 const verifyAdmin = async (req: NextRequest) => {
     try {
         const user = await authenticateRequest(req);

@@ -5,6 +5,8 @@ import User from '@/models/User'; // Ensure User model is registered
 import Track from '@/models/Track'; // Ensure Track model is registered
 import { authenticateRequest } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 // Helper to generate a random code
 function generateRandomCode(length = 8) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
